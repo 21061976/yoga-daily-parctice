@@ -404,12 +404,125 @@
             background: #2e7d32;
             cursor: pointer;
         }
-        
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .exercise-modal-title {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .exercise-instructions {
+            line-height: 1.8;
+            color: #495057;
+            margin-bottom: 20px;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 3em;
+            color: #1976d2;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .timer-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .pause-btn {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: white;
+        }
+
+        .stop-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .container { padding: 15px; }
-            .level-selector { flex-direction: column; }
+            .level-selector { 
+                flex-direction: column;
+                padding: 15px;
+            }
+            .level-btn {
+                margin: 5px 0;
+                width: 100%;
+            }
             .progress-stats { grid-template-columns: 1fr; }
             .exercise-categories { grid-template-columns: 1fr; }
+            .progress-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .category-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .category-icon {
+                margin: 0 0 15px 0;
+            }
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -435,28 +548,28 @@
             
             <div class="progress-stats">
                 <div class="stat-card">
-                    <span class="stat-number" id="daysCount">0</span>
+                    <span class="stat-number" id="daysCount">5</span>
                     <div class="stat-label">ימי תרגול</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number" id="minutesCount">0</span>
+                    <span class="stat-number" id="minutesCount">47</span>
                     <div class="stat-label">דקות מצטברות</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number" id="exercisesCount">0</span>
+                    <span class="stat-number" id="exercisesCount">12</span>
                     <div class="stat-label">תרגילים שנלמדו</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number" id="streakCount">0</span>
+                    <span class="stat-number" id="streakCount">3</span>
                     <div class="stat-label">רצף ימים</div>
                 </div>
             </div>
             
             <div class="mastery-bar">
-                <div class="mastery-fill" id="masteryProgress" style="width: 15%"></div>
+                <div class="mastery-fill" id="masteryProgress" style="width: 35%"></div>
             </div>
             <div style="text-align: center; color: #6c757d; margin-top: 10px;">
-                שליטה ברמה הנוכחית: <span id="masteryPercent">15%</span>
+                שליטה ברמה הנוכחית: <span id="masteryPercent">35%</span>
             </div>
         </div>
         
@@ -736,3 +849,348 @@
         <!-- Expert Level -->
         <div id="expert" class="content-area">
             <div class="unlock-requirements">
+                <div class="unlock-title">👑 דרישות לפתיחת רמה מומחה:</div>
+                • 60 ימי תרגול רצופים ברמה מתקדמת<br>
+                • שליטה מלאה בכל התנוחות המתקדמות<br>
+                • יכולת לעמוד בתנוחת ראש 5 דקות<br>
+                • סיום 10 תרגולים של 45 דקות<br>
+                • הדרכה של מתחיל במשך 7 ימים
+            </div>
+            
+            <div class="exercise-categories">
+                <div class="category-card advanced">
+                    <div class="category-header">
+                        <div class="category-icon">🏆</div>
+                        <div class="category-info">
+                            <div class="category-title">מאסטר קלאס</div>
+                            <div class="category-description">רמת מומחים בלבד</div>
+                            <div class="difficulty-level">
+                                <div class="difficulty-stars">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </div>
+                                <span>מומחה</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="exercise-list">
+                        <div class="exercise-item" onclick="openExercise('scorpion-pose')">
+                            <div class="exercise-name">תנוחת העקרב</div>
+                            <div class="exercise-details">
+                                <span>שילוב איזון וגמישות</span>
+                                <span class="time-duration">30 שנ' - 3 דק'</span>
+                            </div>
+                        </div>
+                        <div class="exercise-item" onclick="openExercise('eight-angle-pose')">
+                            <div class="exercise-name">תנוחת שמונת הזוויות</div>
+                            <div class="exercise-details">
+                                <span>כוח ואיזון מתקדם</span>
+                                <span class="time-duration">10-60 שנ'</span>
+                            </div>
+                        </div>
+                        <div class="exercise-item" onclick="openExercise('lotus-headstand')">
+                            <div class="exercise-name">עמידת ראש בלוטוס</div>
+                            <div class="exercise-details">
+                                <span>שילוב מתקדם של תנוחות</span>
+                                <span class="time-duration">1-10 דק'</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card meditation">
+                    <div class="category-header">
+                        <div class="category-icon">🕉️</div>
+                        <div class="category-info">
+                            <div class="category-title">מדיטציה מתקדמת</div>
+                            <div class="category-description">טכניקות עמוקות לשקט הנפש</div>
+                            <div class="difficulty-level">
+                                <div class="difficulty-stars">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </div>
+                                <span>מומחה</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="exercise-list">
+                        <div class="exercise-item" onclick="openExercise('trataka-meditation')">
+                            <div class="exercise-name">מדיטציית טראטקה</div>
+                            <div class="exercise-details">
+                                <span>מדיטציה על אור נר</span>
+                                <span class="time-duration">10-30 דק'</span>
+                            </div>
+                        </div>
+                        <div class="exercise-item" onclick="openExercise('samadhi-practice')">
+                            <div class="exercise-name">תרגול סמאדהי</div>
+                            <div class="exercise-details">
+                                <span>מצב הארה וחדוות קיום</span>
+                                <span class="time-duration">20-60 דק'</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement System -->
+        <div class="achievement-system">
+            <div class="achievement-title">🏅 מערכת הישגים</div>
+            <div class="achievements-grid">
+                <div class="achievement-badge unlocked">
+                    <span class="badge-icon">🌱</span>
+                    <div class="badge-name">צעדים ראשונים</div>
+                </div>
+                <div class="achievement-badge unlocked">
+                    <span class="badge-icon">🔥</span>
+                    <div class="badge-name">רצף 3 ימים</div>
+                </div>
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">💪</span>
+                    <div class="badge-name">רצף 7 ימים</div>
+                </div>
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">🧘‍♂️</span>
+                    <div class="badge-name">מאסטר נשימות</div>
+                </div>
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">🌟</span>
+                    <div class="badge-name">רצף 30 ימים</div>
+                </div>
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">🏆</span>
+                    <div class="badge-name">מאסטר יוגה</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customization Panel -->
+        <div class="customization-panel">
+            <div class="custom-title">⚙️ התאמה אישית</div>
+            <div class="custom-options">
+                <div class="custom-option">
+                    <div class="option-label">משך תרגול יומי (דקות)</div>
+                    <input type="range" class="option-slider" min="5" max="90" value="15" id="dailyDuration">
+                    <div style="text-align: center; margin-top: 10px;">
+                        <span id="durationDisplay">15 דקות</span>
+                    </div>
+                </div>
+                <div class="custom-option">
+                    <div class="option-label">רמת עצימות</div>
+                    <input type="range" class="option-slider" min="1" max="5" value="2" id="intensityLevel">
+                    <div style="text-align: center; margin-top: 10px;">
+                        <span id="intensityDisplay">נמוכה-בינונית</span>
+                    </div>
+                </div>
+                <div class="custom-option">
+                    <div class="option-label">התמקדות עיקרית</div>
+                    <select style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                        <option>גמישות</option>
+                        <option>כוח</option>
+                        <option>איזון</option>
+                        <option>מדיטציה</option>
+                        <option>נשימה</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercise Modal -->
+    <div id="exerciseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="exercise-modal-title" id="modalTitle">שם התרגיל</div>
+            <div class="exercise-instructions" id="modalInstructions">
+                הוראות התרגיל יופיעו כאן...
+            </div>
+            <div class="timer-display" id="timerDisplay">00:00</div>
+            <div class="timer-controls">
+                <button class="timer-btn start-btn" onclick="startTimer()">התחל</button>
+                <button class="timer-btn pause-btn" onclick="pauseTimer()">השהה</button>
+                <button class="timer-btn stop-btn" onclick="stopTimer()">עצור</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 'beginner';
+        let timerInterval;
+        let timerSeconds = 0;
+        let isTimerRunning = false;
+
+        // Exercise data
+        const exercises = {
+            'breath-basic': {
+                title: 'נשימה טבעית',
+                instructions: `
+                    <h3>שלבי התרגיל:</h3>
+                    <p><strong>1. הכנה:</strong> שבו בנוחות עם גב ישר, עיניים עצומות</p>
+                    <p><strong>2. התבוננות:</strong> שימו לב לנשימה הטבעית שלכם מבלי לשנות אותה</p>
+                    <p><strong>3. מעקב:</strong> עקבו אחר תנועת הנשימה בבטן ובחזה</p>
+                    <p><strong>4. ריכוז:</strong> אם המחשבות נודדות, החזירו את הקשב לנשימה</p>
+                    <p><strong>5. סיום:</strong> פתחו עיניים באיטיות והרגישו את השקט</p>
+                    
+                    <h3>טיפים:</h3>
+                    <p>• אל תכפו על הנשימה - היא צריכה להיות טבעית</p>
+                    <p>• זהו התרגיל הבסיסי ביותר במדיטציה</p>
+                `
+            },
+            'breath-478': {
+                title: 'נשימת 4-7-8',
+                instructions: `
+                    <h3>שלבי התרגיל:</h3>
+                    <p><strong>1. הכנה:</strong> שבו בנוחות, גב ישר, יד אחת על החזה ויד על הבטן</p>
+                    <p><strong>2. נשיפה:</strong> נשפו לחלוטין דרך הפה</p>
+                    <p><strong>3. שאיפה:</strong> שאפו דרך האף למשך 4 ספירות</p>
+                    <p><strong>4. עצירה:</strong> עצרו את הנשימה למשך 7 ספירות</p>
+                    <p><strong>5. נשיפה:</strong> נשפו דרך הפה למשך 8 ספירות</p>
+                    <p><strong>6. חזרה:</strong> חזרו על המחזור 4-8 פעמים</p>
+                    
+                    <h3>יעילות:</h3>
+                    <p>• מפחית חרדה ומתח מיידית</p>
+                    <p>• עוזר להירדם</p>
+                    <p>• מאטה דופק</p>
+                `
+            },
+            'mountain-pose': {
+                title: 'תנוחת ההר (טאדאסנה)',
+                instructions: `
+                    <h3>שלבי התרגיל:</h3>
+                    <p><strong>1. מיקום:</strong> עמדו עם רגליים מקבילות ברוחב כתפיים</p>
+                    <p><strong>2. יישור:</strong> שפו את הגב, הרימו את הראש</p>
+                    <p><strong>3. ידיים:</strong> הידיים לאורך הגוף, כפות פונות קדימה</p>
+                    <p><strong>4. נשימה:</strong> נשמו עמוק ושווה</p>
+                    <p><strong>5. איזון:</strong> הרגישו את היציבות והחיבור לקרקע</p>
+                    
+                    <h3>יתרונות:</h3>
+                    <p>• משפרת יציבה</p>
+                    <p>• מחזקת רגליים וליבה</p>
+                    <p>• בסיס לכל התנוחות האחרות</p>
+                `
+            }
+        };
+
+        function showLevel(level) {
+            // Update active button
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.level-btn.${level}`).classList.add('active');
+            
+            // Update content areas
+            document.querySelectorAll('.content-area').forEach(area => area.classList.remove('active'));
+            document.getElementById(level).classList.add('active');
+            
+            // Update current level display
+            const levelNames = {
+                'beginner': 'מתחיל',
+                'intermediate': 'בינוני', 
+                'advanced': 'מתקדם',
+                'expert': 'מומחה'
+            };
+            document.getElementById('currentLevelDisplay').textContent = `רמה: ${levelNames[level]}`;
+            
+            currentLevel = level;
+        }
+
+        function openExercise(exerciseId) {
+            const exercise = exercises[exerciseId];
+            if (exercise) {
+                document.getElementById('modalTitle').textContent = exercise.title;
+                document.getElementById('modalInstructions').innerHTML = exercise.instructions;
+                document.getElementById('exerciseModal').style.display = 'block';
+                resetTimer();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('exerciseModal').style.display = 'none';
+            stopTimer();
+        }
+
+        function startTimer() {
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            if (isTimerRunning) {
+                isTimerRunning = false;
+                clearInterval(timerInterval);
+            }
+        }
+
+        function stopTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+            resetTimer();
+        }
+
+        function resetTimer() {
+            timerSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+        }
+
+        // Customization sliders
+        document.getElementById('dailyDuration').addEventListener('input', function() {
+            document.getElementById('durationDisplay').textContent = this.value + ' דקות';
+        });
+
+        document.getElementById('intensityLevel').addEventListener('input', function() {
+            const levels = ['קלה מאוד', 'קלה', 'בינונית', 'גבוהה', 'גבוהה מאוד'];
+            document.getElementById('intensityDisplay').textContent = levels[this.value - 1];
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('exerciseModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Simulate progress data updates (in real app, this would come from a database)
+        function simulateProgress() {
+            // Simulate gradual progress
+            const stats = {
+                days: Math.floor(Math.random() * 3) + 5,
+                minutes: Math.floor(Math.random() * 20) + 47,
+                exercises: Math.floor(Math.random() * 5) + 12,
+                streak: Math.floor(Math.random() * 2) + 3
+            };
+            
+            // Update display
+            setTimeout(() => {
+                document.getElementById('daysCount').textContent = stats.days;
+                document.getElementById('minutesCount').textContent = stats.minutes;
+                document.getElementById('exercisesCount').textContent = stats.exercises;
+                document.getElementById('streakCount').textContent = stats.streak;
+            }, 1000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            simulateProgress();
+        });
+    </script>
+</body>
+</html>
