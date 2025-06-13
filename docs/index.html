@@ -2261,4 +2261,398 @@
         }
     </script>
 </body>
+
+    <script>
+// ===== הקוד המלא והנכון לתיקוני יוגה =====
+
+// תרגילים חדשים
+const newExercises = {
+    'table-top': {
+        title: 'תנוחת השולחן',
+        instructions: `
+            <h3>🏓 שלבי התרגיל:</h3>
+            <p><strong>1. מיקום:</strong> עלו על ארבע - ידיים מתחת לכתפיים, ברכיים מתחת לירכיים</p>
+            <p><strong>2. יישור:</strong> שמרו על גב שטוח כמו משטח שולחן</p>
+            <p><strong>3. הפעלה:</strong> הדקו בטן, הפעילו כתפיים ושמרו על יציבות</p>
+            <p><strong>4. נשימה:</strong> נשמו עמוק ושמרו על המיקום</p>
+            <p><strong>5. וריאציות:</strong> הרימו רגל/יד אחת לאתגר נוסף</p>
+            
+            <h3>💪 יתרונות לכתפיים:</h3>
+            <p>• מחזק את שרירי הכתפיים והזרועות</p>
+            <p>• בונה יציבות בחגורת הכתפיים</p>
+            <p>• מכין לתנוחות מתקדמות יותר</p>
+        `
+    },
+    
+    'basic-plank': {
+        title: 'תנוחת הקרש הבסיסית',
+        instructions: `
+            <h3>📏 שלבי התרגיל:</h3>
+            <p><strong>1. הכנה:</strong> התחילו בתנוחת שולחן</p>
+            <p><strong>2. מעבר:</strong> פשטו רגליים אחורה, עמדו על בהונות</p>
+            <p><strong>3. יישור:</strong> הגוף קו ישר מראש עד עקבים</p>
+            <p><strong>4. הפעלה:</strong> הדקו בטן, שמרו כתפיים מעל פרקי ידיים</p>
+            <p><strong>5. זמן:</strong> החזיקו 15-30 שניות בהתחלה</p>
+            
+            <h3>🔥 חיזוק כתפיים:</h3>
+            <p>• מפעיל את כל שרירי הכתפיים</p>
+            <p>• בונה כוח פונקציונלי</p>
+            <p>• משפר יציבות ושליטה</p>
+        `
+    },
+
+    'tree-pose-basic': {
+        title: 'תנוחת העץ הבסיסית',
+        instructions: `
+            <h3>🌳 שלבי התרגיל:</h3>
+            <p><strong>1. מיקום:</strong> עמדו בתנוחת ההר ליד קיר לתמיכה</p>
+            <p><strong>2. הרמת רגל:</strong> הרימו רגל אחת, הניחו על הקרסול או השוק</p>
+            <p><strong>3. איזון:</strong> מצאו נקודת מיקוד ושמרו על איזון</p>
+            <p><strong>4. ידיים:</strong> ידיים במרכז החזה או למעלה</p>
+            <p><strong>5. נשימה:</strong> נשמו עמוק ורגוע</p>
+            
+            <h3>⚖️ יתרונות לאיזון:</h3>
+            <p>• משפר איזון ויציבות</p>
+            <p>• מחזק שרירי הליבה</p>
+            <p>• פיתוח ריכוז ומיקוד</p>
+            
+            <h3>🎯 טיפים:</h3>
+            <p>• אל תלחצו על הברך!</p>
+            <p>• התחילו ליד קיר</p>
+            <p>• שמרו על מבט קבוע</p>
+        `
+    },
+
+    'eagle-arms': {
+        title: 'זרועות הנשר',
+        instructions: `
+            <h3>🦅 שלבי התרגיל:</h3>
+            <p><strong>1. מיקום:</strong> עמדו או שבו בנוחות</p>
+            <p><strong>2. חיבוק:</strong> החבקו ידיים מול החזה</p>
+            <p><strong>3. כריכה:</strong> כרכו יד ימין מתחת לשמאל</p>
+            <p><strong>4. חיבור כפות:</strong> נסו לחבר כפות ידיים</p>
+            <p><strong>5. הרמה:</strong> הרימו מרפקים ומתחו למעלה</p>
+            
+            <h3>🤗 יתרונות לכתפיים:</h3>
+            <p>• מתיחה עמוקה של שרירי הכתפיים</p>
+            <p>• שחרור מתח מהחלק העליון של הגב</p>
+            <p>• שיפור גמישות כתפיים</p>
+        `
+    },
+
+    'standing-balance': {
+        title: 'איזון עומד בסיסי',
+        instructions: `
+            <h3>🤸‍♂️ רצף תרגילי איזון:</h3>
+            <p><strong>1. עמידה על רגל אחת:</strong> 30 שניות לכל רגל</p>
+            <p><strong>2. עיניים עצומות:</strong> חזרו עם עיניים עצומות</p>
+            <p><strong>3. הרמת ברך:</strong> הרימו ברך לגובה ירך</p>
+            <p><strong>4. נגיעות בצד:</strong> נגעו בצד עם יד חופשית</p>
+            <p><strong>5. סיבובי ראש:</strong> סובבו ראש בעדינות</p>
+            
+            <h3>⚖️ התקדמות באיזון:</h3>
+            <p>• שבוע 1: עם תמיכת קיר</p>
+            <p>• שבוע 2: בלי תמיכה</p>
+            <p>• שבוע 3: עם עיניים עצומות</p>
+        `
+    },
+
+    'shoulder-rolls': {
+        title: 'גלגול כתפיים',
+        instructions: `
+            <h3>🔄 שלבי התרגיל:</h3>
+            <p><strong>1. עמידה:</strong> עמדו זקופים, רגליים ברוחב כתפיים</p>
+            <p><strong>2. גלגול אחורה:</strong> הרימו כתפיים, גלגלו אחורה, הורידו</p>
+            <p><strong>3. גלגול קדימה:</strong> חזרו בכיוון ההפוך</p>
+            <p><strong>4. קצב:</strong> תנועה איטית ומבוקרת</p>
+            <p><strong>5. חזרות:</strong> 5-8 פעמים בכל כיוון</p>
+            
+            <h3>💆‍♂️ יתרונות:</h3>
+            <p>• שחרור מתח בכתפיים וצוואר</p>
+            <p>• שיפור זרימת דם</p>
+            <p>• הכנה לתרגילים מורכבים יותר</p>
+        `
+    }
+};
+
+// פונקציה לבדיקת ימים רצופים
+function getConsecutiveDays(practiceDays) {
+    if (practiceDays.length === 0) return 0;
+    
+    const sortedDays = practiceDays.sort();
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (!sortedDays.includes(today)) {
+        return 0;
+    }
+    
+    let consecutiveCount = 1;
+    
+    for (let i = sortedDays.length - 2; i >= 0; i--) {
+        const currentDate = new Date(sortedDays[i + 1]);
+        const previousDate = new Date(sortedDays[i]);
+        const diffTime = currentDate - previousDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+            consecutiveCount++;
+        } else {
+            break;
+        }
+    }
+    
+    return consecutiveCount;
+}
+
+// פונקציה לבדיקת פתיחת רמות
+function checkLevelUnlock() {
+    if (!progressTracker || !progressTracker.data) return;
+    
+    const data = progressTracker.data;
+    const consecutiveDays = getConsecutiveDays(data.practiceDays);
+    const currentLevel = data.level || 'beginner';
+    
+    console.log('בודק רמות:', {
+        currentLevel,
+        consecutiveDays,
+        totalMinutes: data.totalMinutes
+    });
+    
+    // מעבר לרמה בינונית
+    if (currentLevel === 'beginner' && consecutiveDays >= 7 && data.totalMinutes >= 45) {
+        upgradeTo('intermediate', 'בינוני', '🌿');
+        return;
+    }
+    
+    // מעבר לרמה מתקדמת
+    if (currentLevel === 'intermediate' && consecutiveDays >= 30 && data.totalMinutes >= 150) {
+        upgradeTo('advanced', 'מתקדם', '🌳');
+        return;
+    }
+    
+    // מעבר לרמה מומחה
+    if (currentLevel === 'advanced' && consecutiveDays >= 60 && data.totalMinutes >= 450) {
+        upgradeTo('expert', 'מומחה', '🏔️');
+        return;
+    }
+}
+
+// פונקציה לשדרוג רמה
+function upgradeTo(newLevel, levelName, emoji) {
+    progressTracker.data.level = newLevel;
+    progressTracker.saveProgress();
+    
+    // עדכון הממשק
+    updateLevelButtons(newLevel);
+    showLevel(newLevel);
+    
+    // הודעת שדרוג
+    showLevelUpAlert(levelName, emoji);
+    
+    console.log(`🎉 שודרג לרמה: ${newLevel}`);
+}
+
+// עדכון כפתורי רמות
+function updateLevelButtons(currentLevel) {
+    const levels = ['beginner', 'intermediate', 'advanced', 'expert'];
+    const currentIndex = levels.indexOf(currentLevel);
+    
+    levels.forEach((level, index) => {
+        const btn = document.querySelector(`.level-btn.${level}`);
+        if (btn) {
+            if (index <= currentIndex) {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                btn.removeAttribute('disabled');
+            } else {
+                btn.style.opacity = '0.5';
+                btn.style.pointerEvents = 'none';
+                btn.setAttribute('disabled', 'true');
+            }
+        }
+    });
+}
+
+// הודעת שדרוג מעוצבת
+function showLevelUpAlert(levelName, emoji) {
+    const alertDiv = document.createElement('div');
+    alertDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        z-index: 10000;
+        text-align: center;
+        font-size: 1.1em;
+        max-width: 400px;
+        line-height: 1.6;
+    `;
+    
+    alertDiv.innerHTML = `
+        <div style="font-size: 4em; margin-bottom: 15px;">${emoji}</div>
+        <div>🎉 מזל טוב! עלית לרמה חדשה! 🎉</div>
+        <br>
+        <div>${emoji} עכשיו אתה ברמה: ${levelName} ${emoji}</div>
+        <br>
+        <div>תרגילים חדשים נפתחו עבורך!</div>
+        <div>המשך כך - אתה מתקדם נפלא! 💪</div>
+        <button onclick="this.parentElement.remove()" 
+                style="margin-top: 20px; padding: 10px 20px; background: white; 
+                       color: #28a745; border: none; border-radius: 15px; 
+                       font-weight: bold; cursor: pointer;">
+            🚀 בואו נתחיל!
+        </button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentElement) {
+            alertDiv.remove();
+        }
+    }, 10000);
+}
+
+// הוספת התרגילים לממשק
+function addExercisesToInterface() {
+    // הוספת התרגילים למאגר הקיים
+    Object.assign(exercises, newExercises);
+    
+    // הוספת תרגילי כתפיים לקטגוריה הקיימת
+    const asanasCategory = document.querySelector('#beginner .category-card.asanas .exercise-list');
+    
+    if (asanasCategory) {
+        const newExerciseItems = `
+            <div class="exercise-item" onclick="openExercise('table-top')">
+                <div class="exercise-name">תנוחת השולחן</div>
+                <div class="exercise-details">
+                    <span>יציבות וחיזוק כתפיים</span>
+                    <span class="time-duration">30 שנ' - 1 דק'</span>
+                </div>
+            </div>
+            <div class="exercise-item" onclick="openExercise('basic-plank')">
+                <div class="exercise-name">קרש בסיסי</div>
+                <div class="exercise-details">
+                    <span>חיזוק כתפיים וליבה</span>
+                    <span class="time-duration">15-30 שנ'</span>
+                </div>
+            </div>
+            <div class="exercise-item" onclick="openExercise('eagle-arms')">
+                <div class="exercise-name">זרועות הנשר</div>
+                <div class="exercise-details">
+                    <span>מתיחת כתפיים ושחרור מתח</span>
+                    <span class="time-duration">30 שנ' - 1 דק'</span>
+                </div>
+            </div>
+            <div class="exercise-item" onclick="openExercise('shoulder-rolls')">
+                <div class="exercise-name">גלגול כתפיים</div>
+                <div class="exercise-details">
+                    <span>חימום ושחרור מתח</span>
+                    <span class="time-duration">1-2 דק'</span>
+                </div>
+            </div>
+        `;
+        
+        asanasCategory.insertAdjacentHTML('beforeend', newExerciseItems);
+    }
+    
+    // הוספת קטגוריה חדשה לאיזון
+    const beginnerContainer = document.querySelector('#beginner .exercise-categories');
+    
+    if (beginnerContainer) {
+        const balanceCategory = `
+            <div class="category-card asanas">
+                <div class="category-header">
+                    <div class="category-icon">⚖️</div>
+                    <div class="category-info">
+                        <div class="category-title">איזון ויציבות</div>
+                        <div class="category-description">פיתוח שיווי משקל ושליטה</div>
+                        <div class="difficulty-level">
+                            <div class="difficulty-stars">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star empty">★</span>
+                                <span class="star empty">★</span>
+                                <span class="star empty">★</span>
+                            </div>
+                            <span>קל-בינוני</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="exercise-list">
+                    <div class="exercise-item" onclick="openExercise('tree-pose-basic')">
+                        <div class="exercise-name">עץ בסיסי</div>
+                        <div class="exercise-details">
+                            <span>איזון על רגל אחת</span>
+                            <span class="time-duration">30 שנ' - 1 דק'</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item" onclick="openExercise('standing-balance')">
+                        <div class="exercise-name">איזון עומד בסיסי</div>
+                        <div class="exercise-details">
+                            <span>שיפור איזון הדרגתי</span>
+                            <span class="time-duration">3-5 דק'</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        beginnerContainer.insertAdjacentHTML('beforeend', balanceCategory);
+    }
+}
+
+// עדכון פונקציית confirmDailyPractice
+function enhanceConfirmDailyPractice() {
+    const originalConfirm = window.confirmDailyPractice;
+    
+    window.confirmDailyPractice = function() {
+        // קריאה לפונקציה המקורית
+        originalConfirm();
+        
+        // בדיקת מעבר רמות אחרי תרגול
+        setTimeout(() => {
+            checkLevelUnlock();
+        }, 500);
+    };
+}
+
+// הפעלת כל התיקונים
+function initEnhancements() {
+    console.log('🚀 מתחיל להפעיל תיקונים...');
+    
+    // הוספת התרגילים
+    addExercisesToInterface();
+    
+    // שדרוג פונקציית אישור תרגול
+    enhanceConfirmDailyPractice();
+    
+    // בדיקה ראשונית של רמות
+    setTimeout(() => {
+        if (progressTracker) {
+            checkLevelUnlock();
+        }
+    }, 1000);
+    
+    console.log('✅ כל התיקונים הופעלו בהצלחה!');
+    console.log('📚 נוספו 6 תרגילים חדשים לחיזוק כתפיים ושיווי משקל');
+    console.log('🎯 מעבר רמות אוטומטי מופעל - אחרי 7 ימים רצופים תעבור לרמה בינונית!');
+}
+
+// הפעלה כשהדף נטען
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initEnhancements, 1000);
+    });
+} else {
+    setTimeout(initEnhancements, 1000);
+}
+</script>
+    
 </html>
