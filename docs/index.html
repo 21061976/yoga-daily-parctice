@@ -2654,5 +2654,977 @@ if (document.readyState === 'loading') {
     setTimeout(initEnhancements, 1000);
 }
 </script>
+    <script>
+// ===== נגן מוזיקה מתקדם ליוגה =====
+
+// מאגר צלילים מקצועי
+const enhancedAudioLibrary = {
+    'tibetan-singing-bowl': {
+        name: 'קערה טיבטית מקצועית',
+        category: 'meditation',
+        description: 'צליל קערה טיבטית אותנטי',
+        duration: 120,
+        createAudio: function() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const gainNode = audioContext.createGain();
+            
+            // תדרים אותנטיים של קערה טיבטית
+            const fundamentalFreq = 432; // תדר בסיסי
+            const harmonics = [432, 648, 864, 1080, 1296]; // הרמוניות טבעיות
+            
+            const oscillators = harmonics.map(freq => {
+                const osc = audioContext.createOscillator();
+                const oscGain = audioContext.createGain();
+                
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                osc.type = 'sine';
+                
+                // עוצמות הרמוניות יורדות
+                const harmonic_volume = 1 / (harmonics.indexOf(freq) + 1);
+                oscGain.gain.setValueAtTime(harmonic_volume * 0.1, audioContext.currentTime);
+                
+                // דעיכה טבעית
+                oscGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 8);
+                
+                osc.connect(oscGain);
+                oscGain.connect(gainNode);
+                
+                return { osc, oscGain };
+            });
+            
+            gainNode.connect(audioContext.destination);
+            
+            return {
+                start: () => {
+                    oscillators.forEach(({osc}) => osc.start());
+                },
+                stop: () => {
+                    oscillators.forEach(({osc}) => osc.stop());
+                },
+                setVolume: (volume) => {
+                    gainNode.gain.setValueAtTime(volume * 0.3, audioContext.currentTime);
+                }
+            };
+        }
+    },
+
+    'himalayan-bowls': {
+        name: 'קערות הימלאיה',
+        category: 'meditation',
+        description: 'מיקס של מספר קערות בתדרים שונים',
+        duration: 180,
+        createAudio: function() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const gainNode = audioContext.createGain();
+            
+            // מספר קערות בתדרים שונים
+            const bowls = [
+                { freq: 256, volume: 0.8 },  // קערה עמוקה
+                { freq: 432, volume: 1.0 },  // קערה בינונית
+                { freq: 528, volume: 0.6 },  // קערה גבוהה
+                { freq: 741, volume: 0.4 }   // קערה עדינה
+            ];
+            
+            const oscillators = bowls.map(bowl => {
+                const osc = audioContext.createOscillator();
+                const oscGain = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                osc.frequency.setValueAtTime(bowl.freq, audioContext.currentTime);
+                osc.type = 'sine';
+                
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(bowl.freq * 3, audioContext.currentTime);
+                
+                oscGain.gain.setValueAtTime(bowl.volume * 0.08, audioContext.currentTime);
+                oscGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 12);
+                
+                osc.connect(filter);
+                filter.connect(oscGain);
+                oscGain.connect(gainNode);
+                
+                return { osc, oscGain };
+            });
+            
+            gainNode.connect(audioContext.destination);
+            
+            return {
+                start: () => oscillators.forEach(({osc}) => osc.start()),
+                stop: () => oscillators.forEach(({osc}) => osc.stop()),
+                setVolume: (volume) => {
+                    gainNode.gain.setValueAtTime(volume * 0.4, audioContext.currentTime);
+                }
+            };
+        }
+    },
+
+    'om-chanting-deep': {
+        name: 'האמהום עמוק',
+        category: 'mantra',
+        description: 'אמהום בתדר 136.1 הרץ - תדר האום הקוסמי',
+        duration: 300,
+        createAudio: function() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const gainNode = audioContext.createGain();
+            
+            // תדר האום הקוסמי
+            const omFreq = 136.1;
+            
+            const mainOsc = audioContext.createOscillator();
+            const subOsc = audioContext.createOscillator();
+            const filter = audioContext.createBiquadFilter();
+            
+            mainOsc.frequency.setValueAtTime(omFreq, audioContext.currentTime);
+            subOsc.frequency.setValueAtTime(omFreq / 2, audioContext.currentTime);
+            
+            mainOsc.type = 'sawtooth';
+            subOsc.type = 'sine';
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(400, audioContext.currentTime);
+            filter.Q.setValueAtTime(1, audioContext.currentTime);
+            
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            
+            mainOsc.connect(filter);
+            subOsc.connect(gainNode);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            return {
+                start: () => {
+                    mainOsc.start();
+                    subOsc.start();
+                },
+                stop: () => {
+                    mainOsc.stop();
+                    subOsc.stop();
+                },
+                setVolume: (volume) => {
+                    gainNode.gain.setValueAtTime(volume * 0.5, audioContext.currentTime);
+                }
+            };
+        }
+    },
+
+    'temple-atmosphere': {
+        name: 'אווירת מקדש',
+        category: 'ambient',
+        description: 'שילוב של פעמונים, גונגים וזמזום רקע',
+        duration: 240,
+        createAudio: function() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const masterGain = audioContext.createGain();
+            
+            // פעמונים קטנים
+            const createBells = () => {
+                const frequencies = [800, 1000, 1200, 1600];
+                return frequencies.map(freq => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    
+                    osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0.02, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3);
+                    
+                    osc.connect(gain);
+                    gain.connect(masterGain);
+                    
+                    return { osc, gain };
+                });
+            };
+            
+            // זמזום רקע
+            const droneOsc = audioContext.createOscillator();
+            const droneGain = audioContext.createGain();
+            droneOsc.frequency.setValueAtTime(60, audioContext.currentTime);
+            droneOsc.type = 'triangle';
+            droneGain.gain.setValueAtTime(0.05, audioContext.currentTime);
+            
+            droneOsc.connect(droneGain);
+            droneGain.connect(masterGain);
+            
+            const bells = createBells();
+            masterGain.connect(audioContext.destination);
+            
+            return {
+                start: () => {
+                    bells.forEach(({osc}) => osc.start());
+                    droneOsc.start();
+                },
+                stop: () => {
+                    bells.forEach(({osc}) => osc.stop());
+                    droneOsc.stop();
+                },
+                setVolume: (volume) => {
+                    masterGain.gain.setValueAtTime(volume * 0.3, audioContext.currentTime);
+                }
+            };
+        }
+    },
+
+    'forest-rain': {
+        name: 'יער בגשם',
+        category: 'nature',
+        description: 'צלילי גשם עדינים עם רוח ברקע',
+        duration: 360,
+        createAudio: function() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const masterGain = audioContext.createGain();
+            
+            // גשם - רעש לבן מסונן
+            const rainNoise = audioContext.createScriptProcessor(4096, 0, 1);
+            const rainGain = audioContext.createGain();
+            const rainFilter = audioContext.createBiquadFilter();
+            
+            rainFilter.type = 'bandpass';
+            rainFilter.frequency.setValueAtTime(1000, audioContext.currentTime);
+            rainFilter.Q.setValueAtTime(0.5, audioContext.currentTime);
+            
+            rainNoise.onaudioprocess = function(e) {
+                const output = e.outputBuffer.getChannelData(0);
+                for (let i = 0; i < output.length; i++) {
+                    output[i] = (Math.random() * 2 - 1) * 0.3;
+                }
+            };
+            
+            rainGain.gain.setValueAtTime(0.15, audioContext.currentTime);
+            
+            // רוח - רעש ורוד מסונן
+            const windNoise = audioContext.createScriptProcessor(4096, 0, 1);
+            const windGain = audioContext.createGain();
+            const windFilter = audioContext.createBiquadFilter();
+            
+            windFilter.type = 'lowpass';
+            windFilter.frequency.setValueAtTime(200, audioContext.currentTime);
+            
+            windNoise.onaudioprocess = function(e) {
+                const output = e.outputBuffer.getChannelData(0);
+                for (let i = 0; i < output.length; i++) {
+                    output[i] = (Math.random() * 2 - 1) * 0.1;
+                }
+            };
+            
+            windGain.gain.setValueAtTime(0.08, audioContext.currentTime);
+            
+            rainNoise.connect(rainFilter);
+            rainFilter.connect(rainGain);
+            rainGain.connect(masterGain);
+            
+            windNoise.connect(windFilter);
+            windFilter.connect(windGain);
+            windGain.connect(masterGain);
+            
+            masterGain.connect(audioContext.destination);
+            
+            return {
+                start: () => {
+                    // הצלילים יתחילו אוטומטית
+                },
+                stop: () => {
+                    rainNoise.disconnect();
+                    windNoise.disconnect();
+                },
+                setVolume: (volume) => {
+                    masterGain.gain.setValueAtTime(volume * 0.4, audioContext.currentTime);
+                }
+            };
+        }
+    },
+
+    'ocean-waves': {
+        name: 'גלי אוקיינוס',
+        category: 'nature',
+        description: 'גלים רגועים על החוף',
+        duration: 300,
+        createAudio: function() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const masterGain = audioContext.createGain();
+            
+            // גלים - רעש מודולציה איטית
+            const waveOsc = audioContext.createOscillator();
+            const waveGain = audioContext.createGain();
+            const waveFilter = audioContext.createBiquadFilter();
+            const lfo = audioContext.createOscillator();
+            const lfoGain = audioContext.createGain();
+            
+            waveOsc.type = 'sawtooth';
+            waveOsc.frequency.setValueAtTime(80, audioContext.currentTime);
+            
+            waveFilter.type = 'lowpass';
+            waveFilter.frequency.setValueAtTime(300, audioContext.currentTime);
+            
+            lfo.type = 'sine';
+            lfo.frequency.setValueAtTime(0.1, audioContext.currentTime); // גל איטי
+            lfoGain.gain.setValueAtTime(100, audioContext.currentTime);
+            
+            waveGain.gain.setValueAtTime(0.2, audioContext.currentTime);
+            
+            lfo.connect(lfoGain);
+            lfoGain.connect(waveFilter.frequency);
+            
+            waveOsc.connect(waveFilter);
+            waveFilter.connect(waveGain);
+            waveGain.connect(masterGain);
+            
+            masterGain.connect(audioContext.destination);
+            
+            return {
+                start: () => {
+                    waveOsc.start();
+                    lfo.start();
+                },
+                stop: () => {
+                    waveOsc.stop();
+                    lfo.stop();
+                },
+                setVolume: (volume) => {
+                    masterGain.gain.setValueAtTime(volume * 0.3, audioContext.currentTime);
+                }
+            };
+        }
+    },
+
+    'crystal-bowl': {
+        name: 'קערת קריסטל',
+        category: 'healing',
+        description: 'צליל קערת קריסטל מרפא בתדר 528 הרץ',
+        duration: 150,
+        createAudio: function() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const gainNode = audioContext.createGain();
+            
+            // תדר אהבה - 528 הרץ
+            const healingFreq = 528;
+            
+            const mainOsc = audioContext.createOscillator();
+            const harmonic1 = audioContext.createOscillator();
+            const harmonic2 = audioContext.createOscillator();
+            
+            const mainGain = audioContext.createGain();
+            const harm1Gain = audioContext.createGain();
+            const harm2Gain = audioContext.createGain();
+            
+            mainOsc.frequency.setValueAtTime(healingFreq, audioContext.currentTime);
+            harmonic1.frequency.setValueAtTime(healingFreq * 2, audioContext.currentTime);
+            harmonic2.frequency.setValueAtTime(healingFreq * 3, audioContext.currentTime);
+            
+            mainOsc.type = 'sine';
+            harmonic1.type = 'sine';
+            harmonic2.type = 'sine';
+            
+            mainGain.gain.setValueAtTime(0.3, audioContext.currentTime);
+            harm1Gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+            harm2Gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+            
+            // דעיכה ארוכה
+            mainGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 10);
+            harm1Gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 8);
+            harm2Gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 6);
+            
+            mainOsc.connect(mainGain);
+            harmonic1.connect(harm1Gain);
+            harmonic2.connect(harm2Gain);
+            
+            mainGain.connect(gainNode);
+            harm1Gain.connect(gainNode);
+            harm2Gain.connect(gainNode);
+            
+            gainNode.connect(audioContext.destination);
+            
+            return {
+                start: () => {
+                    mainOsc.start();
+                    harmonic1.start();
+                    harmonic2.start();
+                },
+                stop: () => {
+                    mainOsc.stop();
+                    harmonic1.stop();
+                    harmonic2.stop();
+                },
+                setVolume: (volume) => {
+                    gainNode.gain.setValueAtTime(volume * 0.4, audioContext.currentTime);
+                }
+            };
+        }
+    }
+};
+
+// מחלקת נגן מוזיקה מתקדמת
+class EnhancedYogaPlayer {
+    constructor() {
+        this.currentAudio = null;
+        this.isPlaying = false;
+        this.currentTrack = 'tibetan-singing-bowl';
+        this.volume = 0.5;
+        this.autoLoop = true;
+        this.fadeInOut = true;
+        this.crossfadeTime = 2000; // 2 שניות
+        this.playTimer = null;
+        this.setupUI();
+    }
+
+    setupUI() {
+        // שדרוג הנגן הקיים
+        this.updateMusicControls();
+        this.addPlaylistPanel();
+        this.addVisualization();
+    }
+
+    updateMusicControls() {
+        const musicControls = document.querySelector('.music-controls');
+        if (!musicControls) return;
+
+        musicControls.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 15px; min-width: 300px;">
+                <!-- שורה עליונה - כפתורי בקרה -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button class="music-btn" id="playPauseBtn" onclick="yogaPlayer.toggleMusic()">
+                        🎵
+                    </button>
+                    <button class="music-btn" id="prevBtn" onclick="yogaPlayer.previousTrack()">
+                        ⏮️
+                    </button>
+                    <button class="music-btn" id="nextBtn" onclick="yogaPlayer.nextTrack()">
+                        ⏭️
+                    </button>
+                    <button class="music-btn" id="loopBtn" onclick="yogaPlayer.toggleLoop()" 
+                            style="opacity: ${this.autoLoop ? '1' : '0.5'}">
+                        🔄
+                    </button>
+                </div>
+                
+                <!-- שורה שנייה - עוצמה ובחירת רצועה -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 0.9em; color: #666;">🔊</span>
+                    <input type="range" class="volume-control" id="volumeSlider" 
+                           min="0" max="100" value="${this.volume * 100}" 
+                           onchange="yogaPlayer.changeVolume(this.value)">
+                    <span id="volumeDisplay" style="font-size: 0.8em; color: #666;">
+                        ${Math.round(this.volume * 100)}%
+                    </span>
+                </div>
+                
+                <!-- שורה שלישית - בורר מוזיקה -->
+                <select id="musicSelect" onchange="yogaPlayer.changeTrack(this.value)" 
+                        style="padding: 8px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9em;">
+                    ${this.generateTrackOptions()}
+                </select>
+                
+                <!-- שורה רביעית - מידע על הרצועה -->
+                <div id="trackInfo" style="font-size: 0.8em; color: #555; text-align: center; line-height: 1.3;">
+                    <div id="trackName">${enhancedAudioLibrary[this.currentTrack].name}</div>
+                    <div id="trackDescription" style="font-size: 0.7em; opacity: 0.8;">
+                        ${enhancedAudioLibrary[this.currentTrack].description}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    generateTrackOptions() {
+        const categories = {
+            'meditation': 'מדיטציה 🧘‍♂️',
+            'mantra': 'מנטרות 🕉️',
+            'healing': 'ריפוי 💎',
+            'nature': 'טבע 🌿',
+            'ambient': 'אמביינט 🎼'
+        };
+
+        let options = '';
+        
+        Object.entries(categories).forEach(([category, categoryName]) => {
+            options += `<optgroup label="${categoryName}">`;
+            
+            Object.entries(enhancedAudioLibrary).forEach(([key, track]) => {
+                if (track.category === category) {
+                    const selected = key === this.currentTrack ? 'selected' : '';
+                    options += `<option value="${key}" ${selected}>${track.name}</option>`;
+                }
+            });
+            
+            options += '</optgroup>';
+        });
+
+        return options;
+    }
+
+    addPlaylistPanel() {
+        // הוספת פאנל פלייליסט מתקדם
+        const container = document.querySelector('.container');
+        if (!container) return;
+
+        const playlistPanel = document.createElement('div');
+        playlistPanel.id = 'playlistPanel';
+        playlistPanel.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 999;
+            display: none;
+            max-height: 80vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        `;
+
+        playlistPanel.innerHTML = `
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0; color: #2c3e50;">🎵 ספריית מוזיקה</h3>
+                <button onclick="yogaPlayer.togglePlaylist()" 
+                        style="background: none; border: none; font-size: 1.5em; cursor: pointer;">✖️</button>
+            </div>
+            
+            <div id="playlistContent">
+                ${this.generatePlaylistContent()}
+            </div>
+            
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                <h4 style="margin: 0 0 10px 0; color: #2c3e50;">🎛️ הגדרות מתקדמות</h4>
+                
+                <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <input type="checkbox" ${this.autoLoop ? 'checked' : ''} 
+                           onchange="yogaPlayer.setAutoLoop(this.checked)" style="margin-left: 8px;">
+                    <span>ניגון אוטומטי</span>
+                </label>
+                
+                <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <input type="checkbox" ${this.fadeInOut ? 'checked' : ''} 
+                           onchange="yogaPlayer.setFadeInOut(this.checked)" style="margin-left: 8px;">
+                    <span>מעברים חלקים</span>
+                </label>
+                
+                <div style="margin-top: 15px;">
+                    <button onclick="yogaPlayer.createCustomPlaylist()" 
+                            style="width: 100%; padding: 10px; background: linear-gradient(135deg, #28a745, #20c997); 
+                                   color: white; border: none; border-radius: 10px; cursor: pointer;">
+                        🎵 צור פלייליסט אישי
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(playlistPanel);
+        
+        // הוספת כפתור לפתיחת הפלייליסט
+        const playlistBtn = document.createElement('button');
+        playlistBtn.className = 'music-btn';
+        playlistBtn.innerHTML = '📱';
+        playlistBtn.onclick = () => this.togglePlaylist();
+        playlistBtn.style.cssText = `
+            position: fixed;
+            top: 120px;
+            left: 20px;
+            z-index: 1000;
+        `;
+        document.body.appendChild(playlistBtn);
+    }
+
+    generatePlaylistContent() {
+        const categories = {
+            'meditation': { name: 'מדיטציה', icon: '🧘‍♂️', color: '#6f42c1' },
+            'mantra': { name: 'מנטרות', icon: '🕉️', color: '#ffc107' },
+            'healing': { name: 'ריפוי', icon: '💎', color: '#28a745' },
+            'nature': { name: 'טבע', icon: '🌿', color: '#17a2b8' },
+            'ambient': { name: 'אמביינט', icon: '🎼', color: '#dc3545' }
+        };
+
+        let content = '';
+
+        Object.entries(categories).forEach(([category, info]) => {
+            content += `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: ${info.color}; margin: 0 0 10px 0;">
+                        ${info.icon} ${info.name}
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+            `;
+
+            Object.entries(enhancedAudioLibrary).forEach(([key, track]) => {
+                if (track.category === category) {
+                    const isPlaying = this.isPlaying && this.currentTrack === key;
+                    content += `
+                        <div onclick="yogaPlayer.selectTrack('${key}')" 
+                             style="padding: 10px; background: ${isPlaying ? info.color : '#f8f9fa'}; 
+                                    color: ${isPlaying ? 'white' : '#333'}; border-radius: 8px; 
+                                    cursor: pointer; transition: all 0.3s ease; font-size: 0.9em;
+                                    border: 2px solid ${isPlaying ? info.color : 'transparent'};">
+                            <div style="font-weight: bold;">${track.name}</div>
+                            <div style="font-size: 0.8em; opacity: 0.8; margin-top: 3px;">
+                                ${track.description} • ${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            content += '</div></div>';
+        });
+
+        return content;
+    }
+
+    addVisualization() {
+        // הוספת ויזואליזציה פשוטה
+        const musicControls = document.querySelector('.music-controls');
+        if (!musicControls) return;
+
+        const visualizer = document.createElement('div');
+        visualizer.id = 'musicVisualizer';
+        visualizer.style.cssText = `
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+            position: relative;
+        `;
+
+        const waveBar = document.createElement('div');
+        waveBar.style.cssText = `
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997, #17a2b8);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        `;
+
+        visualizer.appendChild(waveBar);
+        musicControls.appendChild(visualizer);
+
+        // אנימציה של הויזואליזציה
+        this.visualizerBar = waveBar;
+        this.startVisualization();
+    }
+
+    startVisualization() {
+        if (this.visualizerInterval) {
+            clearInterval(this.visualizerInterval);
+        }
+
+        this.visualizerInterval = setInterval(() => {
+            if (this.isPlaying && this.visualizerBar) {
+                const randomWidth = Math.random() * 30 + 20; // 20-50%
+                this.visualizerBar.style.width = randomWidth + '%';
+                
+                // שינוי צבע לפי הקטגוריה
+                const track = enhancedAudioLibrary[this.currentTrack];
+                const colors = {
+                    'meditation': 'linear-gradient(90deg, #6f42c1, #8e68c9)',
+                    'mantra': 'linear-gradient(90deg, #ffc107, #ffcd39)',
+                    'healing': 'linear-gradient(90deg, #28a745, #34ce57)',
+                    'nature': 'linear-gradient(90deg, #17a2b8, #20c997)',
+                    'ambient': 'linear-gradient(90deg, #dc3545, #e55167)'
+                };
+                
+                this.visualizerBar.style.background = colors[track.category] || colors.meditation;
+            } else if (this.visualizerBar) {
+                this.visualizerBar.style.width = '0%';
+            }
+        }, 500);
+    }
+
+    // פונקציות נגן בסיסיות
+    toggleMusic() {
+        if (this.isPlaying) {
+            this.stopMusic();
+        } else {
+            this.playMusic();
+        }
+    }
+
+    playMusic() {
+        if (this.currentAudio) {
+            this.currentAudio.stop();
+        }
+
+        const track = enhancedAudioLibrary[this.currentTrack];
+        if (!track) return;
+
+        this.currentAudio = track.createAudio();
+        this.currentAudio.setVolume(this.volume);
+        this.currentAudio.start();
+        
+        this.isPlaying = true;
+        this.updatePlayButton();
+        this.updateTrackInfo();
+        
+        // לולאה אוטומטית
+        if (this.autoLoop) {
+            this.playTimer = setTimeout(() => {
+                if (this.isPlaying) {
+                    this.nextTrack();
+                }
+            }, track.duration * 1000);
+        }
+
+        console.log(`🎵 מנגן: ${track.name}`);
+    }
+
+    stopMusic() {
+        if (this.currentAudio) {
+            this.currentAudio.stop();
+            this.currentAudio = null;
+        }
+        
+        if (this.playTimer) {
+            clearTimeout(this.playTimer);
+            this.playTimer = null;
+        }
+
+        this.isPlaying = false;
+        this.updatePlayButton();
+    }
+
+    changeTrack(trackKey) {
+        const wasPlaying = this.isPlaying;
+        this.stopMusic();
+        this.currentTrack = trackKey;
+        
+        if (wasPlaying) {
+            setTimeout(() => this.playMusic(), 100);
+        }
+        
+        this.updateTrackInfo();
+        this.updatePlaylistHighlight();
+    }
+
+    selectTrack(trackKey) {
+        this.changeTrack(trackKey);
+        if (!this.isPlaying) {
+            this.playMusic();
+        }
+    }
+
+    nextTrack() {
+        const tracks = Object.keys(enhancedAudioLibrary);
+        const currentIndex = tracks.indexOf(this.currentTrack);
+        const nextIndex = (currentIndex + 1) % tracks.length;
+        this.changeTrack(tracks[nextIndex]);
+        
+        if (this.isPlaying || this.autoLoop) {
+            this.playMusic();
+        }
+    }
+
+    previousTrack() {
+        const tracks = Object.keys(enhancedAudioLibrary);
+        const currentIndex = tracks.indexOf(this.currentTrack);
+        const prevIndex = currentIndex === 0 ? tracks.length - 1 : currentIndex - 1;
+        this.changeTrack(tracks[prevIndex]);
+        
+        if (this.isPlaying) {
+            this.playMusic();
+        }
+    }
+
+    changeVolume(value) {
+        this.volume = value / 100;
+        
+        if (this.currentAudio) {
+            this.currentAudio.setVolume(this.volume);
+        }
+        
+        const display = document.getElementById('volumeDisplay');
+        if (display) {
+            display.textContent = `${Math.round(this.volume * 100)}%`;
+        }
+    }
+
+    toggleLoop() {
+        this.autoLoop = !this.autoLoop;
+        const btn = document.getElementById('loopBtn');
+        if (btn) {
+            btn.style.opacity = this.autoLoop ? '1' : '0.5';
+        }
+        
+        console.log(`🔄 לולאה אוטומטית: ${this.autoLoop ? 'פעילה' : 'כבויה'}`);
+    }
+
+    setAutoLoop(enabled) {
+        this.autoLoop = enabled;
+        this.toggleLoop();
+    }
+
+    setFadeInOut(enabled) {
+        this.fadeInOut = enabled;
+        console.log(`🎛️ מעברים חלקים: ${enabled ? 'פעילים' : 'כבויים'}`);
+    }
+
+    // פונקציות UI
+    updatePlayButton() {
+        const btn = document.getElementById('playPauseBtn');
+        if (btn) {
+            btn.textContent = this.isPlaying ? '⏸️' : '🎵';
+            btn.style.backgroundColor = this.isPlaying ? '#dc3545' : '#28a745';
+        }
+    }
+
+    updateTrackInfo() {
+        const track = enhancedAudioLibrary[this.currentTrack];
+        const nameEl = document.getElementById('trackName');
+        const descEl = document.getElementById('trackDescription');
+        const selectEl = document.getElementById('musicSelect');
+        
+        if (nameEl) nameEl.textContent = track.name;
+        if (descEl) descEl.textContent = track.description;
+        if (selectEl) selectEl.value = this.currentTrack;
+    }
+
+    updatePlaylistHighlight() {
+        const panel = document.getElementById('playlistPanel');
+        if (panel) {
+            panel.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: #2c3e50;">🎵 ספריית מוזיקה</h3>
+                    <button onclick="yogaPlayer.togglePlaylist()" 
+                            style="background: none; border: none; font-size: 1.5em; cursor: pointer;">✖️</button>
+                </div>
+                
+                <div id="playlistContent">
+                    ${this.generatePlaylistContent()}
+                </div>
+                
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">🎛️ הגדרות מתקדמות</h4>
+                    
+                    <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <input type="checkbox" ${this.autoLoop ? 'checked' : ''} 
+                               onchange="yogaPlayer.setAutoLoop(this.checked)" style="margin-left: 8px;">
+                        <span>ניגון אוטומטי</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <input type="checkbox" ${this.fadeInOut ? 'checked' : ''} 
+                               onchange="yogaPlayer.setFadeInOut(this.checked)" style="margin-left: 8px;">
+                        <span>מעברים חלקים</span>
+                    </label>
+                    
+                    <div style="margin-top: 15px;">
+                        <button onclick="yogaPlayer.createCustomPlaylist()" 
+                                style="width: 100%; padding: 10px; background: linear-gradient(135deg, #28a745, #20c997); 
+                                       color: white; border: none; border-radius: 10px; cursor: pointer;">
+                            🎵 צור פלייליסט אישי
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    togglePlaylist() {
+        const panel = document.getElementById('playlistPanel');
+        if (panel) {
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    createCustomPlaylist() {
+        alert('🎵 תכונה זו תתווסף בקרוב! תוכל ליצור פלייליסטים אישיים מותאמים לסוג התרגול שלך.');
+    }
+
+    // הרס ונקוי
+    destroy() {
+        this.stopMusic();
+        
+        if (this.visualizerInterval) {
+            clearInterval(this.visualizerInterval);
+        }
+        
+        const panel = document.getElementById('playlistPanel');
+        if (panel) panel.remove();
+    }
+}
+
+// פונקציות עזר למיזוג עם הקוד הקיים
+function integrateEnhancedPlayer() {
+    // הסרת הקוד הישן
+    if (window.currentAudio) {
+        try {
+            window.currentAudio.stop();
+        } catch (e) {}
+    }
+
+    // יצירת נגן חדש
+    window.yogaPlayer = new EnhancedYogaPlayer();
     
+    // עדכון הפונקציות הגלובליות הקיימות
+    window.toggleMusic = () => window.yogaPlayer.toggleMusic();
+    window.changeMusic = () => window.yogaPlayer.nextTrack();
+    window.changeVolume = () => {
+        const slider = document.getElementById('volumeSlider');
+        if (slider) {
+            window.yogaPlayer.changeVolume(slider.value);
+        }
+    };
+
+    console.log('🎵 נגן מוזיקה מתקדם הופעל בהצלחה!');
+    console.log('🎼 זמינים 7 צלילים מקצועיים לבחירה');
+    console.log('📱 לחץ על כפתור הפלייליסט לעוד אפשרויות');
+}
+
+// הפעלת הנגן המתקדם
+function initEnhancedMusicPlayer() {
+    // המתנה לטעינת הקוד הקיים
+    setTimeout(() => {
+        integrateEnhancedPlayer();
+        
+        // הוספת סטיילים נוספים
+        const style = document.createElement('style');
+        style.textContent = `
+            .music-controls {
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(15px) !important;
+                border: 2px solid rgba(218, 165, 32, 0.3) !important;
+            }
+            
+            .music-btn {
+                transition: all 0.3s ease !important;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            }
+            
+            .music-btn:hover {
+                transform: scale(1.1) !important;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
+            }
+            
+            .volume-control {
+                background: linear-gradient(90deg, #28a745, #20c997) !important;
+                height: 6px !important;
+                border-radius: 3px !important;
+            }
+            
+            #playlistPanel::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            #playlistPanel::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+            
+            #playlistPanel::-webkit-scrollbar-thumb {
+                background: linear-gradient(180deg, #28a745, #20c997);
+                border-radius: 3px;
+            }
+        `;
+        document.head.appendChild(style);
+        
+    }, 2000);
+}
+
+// הפעלה אוטומטית
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEnhancedMusicPlayer);
+} else {
+    initEnhancedMusicPlayer();
+}
+</script>
 </html>
