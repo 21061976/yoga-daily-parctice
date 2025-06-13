@@ -2655,3 +2655,459 @@ if (document.readyState === 'loading') {
 }
 </script>
 </html>
+<script>
+// ===== סרטוני יוגה פשוטים לפי רמות =====
+
+// מאגר סרטוני יוגה 10 דקות
+const simpleYogaVideos = {
+    'beginner': [
+        {
+            title: 'יוגה בוקר עדינה',
+            url: 'https://youtu.be/X3-gKPNyrTA',
+            description: 'תרגול בוקר רך למתחילים'
+        },
+        {
+            title: 'יוגה ערב מרגיעה',
+            url: 'https://youtu.be/v7AYKMP6rOE',
+            description: 'תרגול מרגיע לפני השינה'
+        },
+        {
+            title: 'מתיחות בסיסיות',
+            url: 'https://youtu.be/GLy2rYHwUqY',
+            description: 'תנוחות פשוטות לכל הגוף'
+        }
+    ],
+    
+    'intermediate': [
+        {
+            title: 'יוגה כוח ואיזון',
+            url: 'https://youtu.be/g_tea8ZNk5A',
+            description: 'תרגול דינמי וחיזוק'
+        },
+        {
+            title: 'סאן סלוטיישן מהיר',
+            url: 'https://youtu.be/UEEsdXn8oG8',
+            description: 'ברכת השמש אנרגטית'
+        },
+        {
+            title: 'פאוור יוגה',
+            url: 'https://youtu.be/KWBfQjuwp4E',
+            description: 'תרגול אינטנסיבי'
+        }
+    ],
+    
+    'advanced': [
+        {
+            title: 'יוגה מתקדמת',
+            url: 'https://youtu.be/j7rKKpwdXNE',
+            description: 'תנוחות מאתגרות'
+        },
+        {
+            title: 'תנוחות איזון',
+            url: 'https://youtu.be/nAmc9SNciTg',
+            description: 'איזונים מתקדמים'
+        },
+        {
+            title: 'אשטנגה יוגה',
+            url: 'https://youtu.be/yqJb3TRhLls',
+            description: 'תרגול אשטנגה מסורתי'
+        }
+    ],
+    
+    'expert': [
+        {
+            title: 'יוגה מומחים',
+            url: 'https://youtu.be/4pKly2JojMw',
+            description: 'תרגול ברמת מאסטר'
+        },
+        {
+            title: 'פלו מתקדם',
+            url: 'https://youtu.be/1VYlOKUdylM',
+            description: 'זרימה מורכבת'
+        },
+        {
+            title: 'תנוחות אוויר',
+            url: 'https://youtu.be/bVbqGJbQzEY',
+            description: 'תנוחות אוויר קיצוניות'
+        }
+    ]
+};
+
+// פונקציה פשוטה להוספת כפתורי וידאו
+function addSimpleVideoButtons() {
+    const levels = ['beginner', 'intermediate', 'advanced', 'expert'];
+    const levelNames = {
+        'beginner': 'מתחיל',
+        'intermediate': 'בינוני', 
+        'advanced': 'מתקדם',
+        'expert': 'מומחה'
+    };
+
+    levels.forEach(level => {
+        const container = document.querySelector(`#${level} .exercise-categories`);
+        if (!container) return;
+
+        // יצירת כרטיס וידאו פשוט
+        const videoCard = document.createElement('div');
+        videoCard.className = 'category-card meditation';
+        videoCard.innerHTML = `
+            <div class="category-header">
+                <div class="category-icon">📺</div>
+                <div class="category-info">
+                    <div class="category-title">יוגה מצולמת - 10 דקות</div>
+                    <div class="category-description">סרטוני יוגה איכותיים לרמת ${levelNames[level]}</div>
+                    <div class="difficulty-level">
+                        <div class="difficulty-stars">
+                            ${generateStars(level)}
+                        </div>
+                        <span>${levelNames[level]}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise-list">
+                ${simpleYogaVideos[level].map((video, index) => `
+                    <div class="exercise-item" onclick="openYogaVideo('${video.url}')"
+                         style="cursor: pointer; transition: all 0.3s ease;">
+                        <div class="exercise-name">📹 ${video.title}</div>
+                        <div class="exercise-details">
+                            <span>${video.description}</span>
+                            <span class="time-duration">10 דק'</span>
+                        </div>
+                    </div>
+                `).join('')}
+                
+                <div class="exercise-item" onclick="openVideoList('${level}')"
+                     style="background: linear-gradient(135deg, #FF6B35, #F7931E); color: white; cursor: pointer;">
+                    <div class="exercise-name">🎬 כל הסרטונים</div>
+                    <div class="exercise-details" style="color: rgba(255,255,255,0.9);">
+                        <span>רשימת כל הסרטונים ברמה</span>
+                        <span class="time-duration">בחירה</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(videoCard);
+    });
+}
+
+// פונקציה ליצירת כוכבים
+function generateStars(level) {
+    const starCounts = { 'beginner': 1, 'intermediate': 3, 'advanced': 4, 'expert': 5 };
+    const count = starCounts[level];
+    let stars = '';
+    
+    for (let i = 1; i <= 5; i++) {
+        stars += i <= count ? '<span class="star">★</span>' : '<span class="star empty">★</span>';
+    }
+    return stars;
+}
+
+// פונקציה לפתיחת וידאו בחלון חדש
+function openYogaVideo(url) {
+    window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    console.log('📺 פותח סרטון יוגה:', url);
+}
+
+// פונקציה לפתיחת רשימת וידאו
+function openVideoList(level) {
+    const levelNames = {
+        'beginner': 'מתחיל',
+        'intermediate': 'בינוני',
+        'advanced': 'מתקדם', 
+        'expert': 'מומחה'
+    };
+
+    const videos = simpleYogaVideos[level];
+    let message = `🎬 סרטוני יוגה ברמת ${levelNames[level]}:\n\n`;
+    
+    videos.forEach((video, index) => {
+        message += `${index + 1}. ${video.title}\n   ${video.description}\n\n`;
+    });
+    
+    message += 'לחץ OK ולאחר מכן בחר סרטון ספציפי 📺';
+    
+    alert(message);
+}
+
+// הפעלה
+function initSimpleYogaVideos() {
+    setTimeout(() => {
+        addSimpleVideoButtons();
+        
+        // הוספה לחלון הגלובלי
+        window.openYogaVideo = openYogaVideo;
+        window.openVideoList = openVideoList;
+        
+        console.log('📺 סרטוני יוגה פשוטים הופעלו!');
+        console.log('🎬 12 סרטונים איכותיים זמינים');
+    }, 1000);
+}
+
+// הפעלה אוטומטית
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSimpleYogaVideos);
+} else {
+    initSimpleYogaVideos();
+}
+</script>
+<script>
+// ===== הסרת צלילים סינתטיים + קישורים לצלילים אמיתיים =====
+
+// מאגר קישורים לצלילים איכותיים אמיתיים
+const realAudioLinks = {
+    'tibetan-bowl': {
+        name: 'קערה טיבטית אמיתית',
+        url: 'https://youtu.be/sHLzXAXwmIc',
+        description: '3 שעות של צליל קערה טיבטית מקצועי',
+        icon: '🏔️',
+        duration: '3:00:00'
+    },
+    
+    'rain-sounds': {
+        name: 'גשם עדין',
+        url: 'https://youtu.be/mPZkdNFkNps',
+        description: 'גשם טבעי ללא רעמים - 10 שעות',
+        icon: '🌧️',
+        duration: '10:00:00'
+    },
+    
+    'ocean-waves': {
+        name: 'גלי ים',
+        url: 'https://youtu.be/V1bFr2SWP1I',
+        description: 'גלים רגועים על החוף - 11 שעות',
+        icon: '🌊',
+        duration: '11:00:00'
+    },
+    
+    'forest-wind': {
+        name: 'רוח ביער',
+        url: 'https://youtu.be/nDq6TstdEi8',
+        description: 'רוח עדינה בין העצים - 2 שעות',
+        icon: '🌲',
+        duration: '2:00:00'
+    },
+    
+    'om-chanting': {
+        name: 'האמהום המקצועי',
+        url: 'https://youtu.be/cgVQgZ-LE8M',
+        description: 'נזירים טיבטיים אמיתיים - 1.5 שעות',
+        icon: '🕉️',
+        duration: '1:30:00'
+    },
+    
+    'birds-forest': {
+        name: 'ציפורים ביער',
+        url: 'https://youtu.be/xNN7iTA57jM',
+        description: 'קולות ציפורים טבעיים - 8 שעות',
+        icon: '🐦',
+        duration: '8:00:00'
+    }
+};
+
+// פונקציה להחלפת נגן המוזיקה הישן
+function replaceOldMusicPlayer() {
+    const musicControls = document.querySelector('.music-controls');
+    if (!musicControls) return;
+
+    // ניקוי הנגן הישן
+    musicControls.innerHTML = `
+        <div style="background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 15px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px);
+                    border: 2px solid rgba(40, 167, 69, 0.3);">
+            
+            <!-- כותרת -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #2c3e50; font-size: 1.3em;">
+                    🎵 צלילי יוגה איכותיים
+                </h3>
+                <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">
+                    קישורים לצלילים מקצועיים מיוטיוב
+                </p>
+            </div>
+            
+            <!-- כפתורי צלילים -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px;">
+                ${Object.entries(realAudioLinks).map(([key, audio]) => `
+                    <button onclick="openAudioLink('${audio.url}', '${audio.name}')" 
+                            style="display: flex; align-items: center; justify-content: space-between;
+                                   padding: 12px 15px; background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                                   border: 2px solid #28a745; border-radius: 10px; cursor: pointer;
+                                   transition: all 0.3s ease; text-decoration: none;">
+                        
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.5em;">${audio.icon}</span>
+                            <div style="text-align: right;">
+                                <div style="font-weight: bold; color: #2c3e50; margin-bottom: 2px;">
+                                    ${audio.name}
+                                </div>
+                                <div style="font-size: 0.8em; color: #666;">
+                                    ${audio.description}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 5px; color: #28a745; font-size: 0.9em;">
+                            <span>⏱️ ${audio.duration}</span>
+                            <span style="font-size: 1.2em;">▶️</span>
+                        </div>
+                    </button>
+                `).join('')}
+            </div>
+            
+            <!-- הוראות שימוש -->
+            <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 15px; 
+                        border-radius: 10px; border-right: 4px solid #1976d2; margin-bottom: 15px;">
+                <div style="font-weight: bold; color: #1976d2; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
+                    💡 איך להשתמש:
+                </div>
+                <div style="font-size: 0.9em; color: #555; line-height: 1.5;">
+                    1️⃣ בחר צליל מהרשימה למעלה<br>
+                    2️⃣ ייפתח יוטיוב בחלון חדש<br>
+                    3️⃣ חזור לכאן ותמשיך לתרגל<br>
+                    4️⃣ הצליל ירוץ ברקע בזמן התרגול
+                </div>
+            </div>
+            
+            <!-- כפתורי פעולה מהירה -->
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="openRandomAudio()" 
+                        style="padding: 10px 20px; background: linear-gradient(135deg, #28a745, #20c997);
+                               color: white; border: none; border-radius: 20px; cursor: pointer;
+                               font-weight: bold; transition: all 0.3s ease;">
+                    🎲 צליל אקראי
+                </button>
+                
+                <button onclick="openPopularAudio()" 
+                        style="padding: 10px 20px; background: linear-gradient(135deg, #ffc107, #e0a800);
+                               color: white; border: none; border-radius: 20px; cursor: pointer;
+                               font-weight: bold; transition: all 0.3s ease;">
+                    ⭐ הכי פופולרי
+                </button>
+                
+                <button onclick="showAudioTips()" 
+                        style="padding: 10px 20px; background: linear-gradient(135deg, #6f42c1, #5a32a3);
+                               color: white; border: none; border-radius: 20px; cursor: pointer;
+                               font-weight: bold; transition: all 0.3s ease;">
+                    💡 טיפים
+                </button>
+            </div>
+            
+            <!-- סטטוס -->
+            <div style="text-align: center; margin-top: 15px; font-size: 0.8em; color: #666;
+                        padding: 8px; background: rgba(248, 249, 250, 0.8); border-radius: 8px;">
+                🎵 6 צלילים איכותיים זמינים • ללא הגבלת זמן • איכות מקצועית
+            </div>
+        </div>
+    `;
+
+    // הסרת הקוד הסינתטי הישן
+    if (window.currentAudio) {
+        try {
+            window.currentAudio.stop();
+        } catch (e) {}
+        window.currentAudio = null;
+    }
+
+    // הסרת פונקציות ישנות
+    window.toggleMusic = null;
+    window.changeMusic = null;
+    window.changeVolume = null;
+}
+
+// פונקציות חדשות
+function openAudioLink(url, name) {
+    window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    
+    // הודעה ידידותית
+    setTimeout(() => {
+        alert(`🎵 נפתח: ${name}\n\n💡 טיפ: השאר את החלון פתוח ברקע בזמן התרגול!\nהצליל ימשיך לרוץ ותוכל לחזור כאן לתרגל 🧘‍♂️`);
+    }, 1000);
+    
+    console.log('🎵 פותח צליל איכותי:', name);
+}
+
+function openRandomAudio() {
+    const audioKeys = Object.keys(realAudioLinks);
+    const randomKey = audioKeys[Math.floor(Math.random() * audioKeys.length)];
+    const randomAudio = realAudioLinks[randomKey];
+    
+    openAudioLink(randomAudio.url, randomAudio.name);
+}
+
+function openPopularAudio() {
+    // קערה טיבטית - הכי פופולרי
+    const popular = realAudioLinks['tibetan-bowl'];
+    openAudioLink(popular.url, popular.name);
+}
+
+function showAudioTips() {
+    const tips = `
+🎵 טיפים לשימוש מיטבי בצלילי היוגה:
+
+🎯 לתרגול יוגה:
+- קערה טיבטית - מושלמת למדיטציה
+- גלי ים - מעולה לתרגול זורם
+- רוח ביער - נהדר לנשימות
+
+⏰ למשך זמן:
+- תרגול קצר (10-20 דק') - כל צליל מתאים
+- תרגול ארוך (30+ דק') - בחר צליל של 3+ שעות
+
+🔊 עוצמת קול:
+- התחל בנמוך ותעלה בהדרגה
+- הצליל צריך להיות ברקע, לא לכסות את הנשימה
+
+💡 טיפ מקצועי:
+פתח 2 צלילים יחד (למשל קערה + גשם) ליצירת שכבות!
+    `;
+    
+    alert(tips);
+}
+
+// הפעלת הפתרון החדש
+function initRealAudioSolution() {
+    setTimeout(() => {
+        replaceOldMusicPlayer();
+        
+        // הוספה לחלון הגלובלי
+        window.openAudioLink = openAudioLink;
+        window.openRandomAudio = openRandomAudio;
+        window.openPopularAudio = openPopularAudio;
+        window.showAudioTips = showAudioTips;
+        
+        // הוספת סטיילים
+        const style = document.createElement('style');
+        style.textContent = `
+            .music-controls button:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3) !important;
+                border-color: #1976d2 !important;
+            }
+            
+            .music-controls {
+                position: fixed !important;
+                top: 20px !important;
+                left: 20px !important;
+                z-index: 1000 !important;
+                max-width: 350px !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        console.log('🎵 פתרון צלילים אמיתיים הופעל!');
+        console.log('✅ הוסרו כל הצלילים הסינתטיים');
+        console.log('🔗 נוספו קישורים לצלילים איכותיים');
+        
+    }, 500);
+}
+
+// הפעלה אוטומטית
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRealAudioSolution);
+} else {
+    initRealAudioSolution();
+}
+</script>
+</html>
