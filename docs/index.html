@@ -2852,262 +2852,371 @@ if (document.readyState === 'loading') {
     initSimpleYogaVideos();
 }
 </script>
-<script>
-// ===== הסרת צלילים סינתטיים + קישורים לצלילים אמיתיים =====
+<script>// ===== נגן מוזיקה קומפקטי עם סליידר =====
 
-// מאגר קישורים לצלילים איכותיים אמיתיים
-const realAudioLinks = {
+// מאגר צלילים (זהה לקודם)
+const compactAudioLibrary = {
     'tibetan-bowl': {
-        name: 'קערה טיבטית אמיתית',
+        name: 'קערה טיבטית',
         url: 'https://youtu.be/sHLzXAXwmIc',
-        description: '3 שעות של צליל קערה טיבטית מקצועי',
         icon: '🏔️',
         duration: '3:00:00'
     },
-    
     'rain-sounds': {
         name: 'גשם עדין',
         url: 'https://youtu.be/mPZkdNFkNps',
-        description: 'גשם טבעי ללא רעמים - 10 שעות',
         icon: '🌧️',
         duration: '10:00:00'
     },
-    
     'ocean-waves': {
         name: 'גלי ים',
         url: 'https://youtu.be/V1bFr2SWP1I',
-        description: 'גלים רגועים על החוף - 11 שעות',
         icon: '🌊',
         duration: '11:00:00'
     },
-    
     'forest-wind': {
         name: 'רוח ביער',
         url: 'https://youtu.be/nDq6TstdEi8',
-        description: 'רוח עדינה בין העצים - 2 שעות',
         icon: '🌲',
         duration: '2:00:00'
     },
-    
     'om-chanting': {
-        name: 'האמהום המקצועי',
+        name: 'האמהום',
         url: 'https://youtu.be/cgVQgZ-LE8M',
-        description: 'נזירים טיבטיים אמיתיים - 1.5 שעות',
         icon: '🕉️',
         duration: '1:30:00'
     },
-    
     'birds-forest': {
-        name: 'ציפורים ביער',
+        name: 'ציפורים',
         url: 'https://youtu.be/xNN7iTA57jM',
-        description: 'קולות ציפורים טבעיים - 8 שעות',
         icon: '🐦',
         duration: '8:00:00'
     }
 };
 
-// פונקציה להחלפת נגן המוזיקה הישן
-function replaceOldMusicPlayer() {
-    const musicControls = document.querySelector('.music-controls');
-    if (!musicControls) return;
-
-    // ניקוי הנגן הישן
-    musicControls.innerHTML = `
-        <div style="background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 15px;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px);
-                    border: 2px solid rgba(40, 167, 69, 0.3);">
-            
-            <!-- כותרת -->
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; color: #2c3e50; font-size: 1.3em;">
-                    🎵 צלילי יוגה איכותיים
-                </h3>
-                <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">
-                    קישורים לצלילים מקצועיים מיוטיוב
-                </p>
-            </div>
-            
-            <!-- כפתורי צלילים -->
-            <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px;">
-                ${Object.entries(realAudioLinks).map(([key, audio]) => `
-                    <button onclick="openAudioLink('${audio.url}', '${audio.name}')" 
-                            style="display: flex; align-items: center; justify-content: space-between;
-                                   padding: 12px 15px; background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-                                   border: 2px solid #28a745; border-radius: 10px; cursor: pointer;
-                                   transition: all 0.3s ease; text-decoration: none;">
-                        
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 1.5em;">${audio.icon}</span>
-                            <div style="text-align: right;">
-                                <div style="font-weight: bold; color: #2c3e50; margin-bottom: 2px;">
-                                    ${audio.name}
-                                </div>
-                                <div style="font-size: 0.8em; color: #666;">
-                                    ${audio.description}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="display: flex; align-items: center; gap: 5px; color: #28a745; font-size: 0.9em;">
-                            <span>⏱️ ${audio.duration}</span>
-                            <span style="font-size: 1.2em;">▶️</span>
-                        </div>
-                    </button>
-                `).join('')}
-            </div>
-            
-            <!-- הוראות שימוש -->
-            <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 15px; 
-                        border-radius: 10px; border-right: 4px solid #1976d2; margin-bottom: 15px;">
-                <div style="font-weight: bold; color: #1976d2; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
-                    💡 איך להשתמש:
-                </div>
-                <div style="font-size: 0.9em; color: #555; line-height: 1.5;">
-                    1️⃣ בחר צליל מהרשימה למעלה<br>
-                    2️⃣ ייפתח יוטיוב בחלון חדש<br>
-                    3️⃣ חזור לכאן ותמשיך לתרגל<br>
-                    4️⃣ הצליל ירוץ ברקע בזמן התרגול
-                </div>
-            </div>
-            
-            <!-- כפתורי פעולה מהירה -->
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <button onclick="openRandomAudio()" 
-                        style="padding: 10px 20px; background: linear-gradient(135deg, #28a745, #20c997);
-                               color: white; border: none; border-radius: 20px; cursor: pointer;
-                               font-weight: bold; transition: all 0.3s ease;">
-                    🎲 צליל אקראי
-                </button>
-                
-                <button onclick="openPopularAudio()" 
-                        style="padding: 10px 20px; background: linear-gradient(135deg, #ffc107, #e0a800);
-                               color: white; border: none; border-radius: 20px; cursor: pointer;
-                               font-weight: bold; transition: all 0.3s ease;">
-                    ⭐ הכי פופולרי
-                </button>
-                
-                <button onclick="showAudioTips()" 
-                        style="padding: 10px 20px; background: linear-gradient(135deg, #6f42c1, #5a32a3);
-                               color: white; border: none; border-radius: 20px; cursor: pointer;
-                               font-weight: bold; transition: all 0.3s ease;">
-                    💡 טיפים
-                </button>
-            </div>
-            
-            <!-- סטטוס -->
-            <div style="text-align: center; margin-top: 15px; font-size: 0.8em; color: #666;
-                        padding: 8px; background: rgba(248, 249, 250, 0.8); border-radius: 8px;">
-                🎵 6 צלילים איכותיים זמינים • ללא הגבלת זמן • איכות מקצועית
-            </div>
-        </div>
-    `;
-
-    // הסרת הקוד הסינתטי הישן
-    if (window.currentAudio) {
-        try {
-            window.currentAudio.stop();
-        } catch (e) {}
-        window.currentAudio = null;
+// מחלקת נגן קומפקטי
+class CompactMusicPlayer {
+    constructor() {
+        this.isExpanded = false;
+        this.currentTrack = 'tibetan-bowl';
+        this.createCompactPlayer();
     }
 
-    // הסרת פונקציות ישנות
-    window.toggleMusic = null;
-    window.changeMusic = null;
-    window.changeVolume = null;
-}
+    createCompactPlayer() {
+        const musicControls = document.querySelector('.music-controls');
+        if (!musicControls) return;
 
-// פונקציות חדשות
-function openAudioLink(url, name) {
-    window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
-    
-    // הודעה ידידותית
-    setTimeout(() => {
-        alert(`🎵 נפתח: ${name}\n\n💡 טיפ: השאר את החלון פתוח ברקע בזמן התרגול!\nהצליל ימשיך לרוץ ותוכל לחזור כאן לתרגל 🧘‍♂️`);
-    }, 1000);
-    
-    console.log('🎵 פותח צליל איכותי:', name);
-}
+        // החלפת הנגן הישן בנגן קומפקטי
+        musicControls.innerHTML = `
+            <div id="compactPlayer" style="
+                background: rgba(255, 255, 255, 0.98);
+                border-radius: 25px;
+                padding: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                backdrop-filter: blur(15px);
+                border: 2px solid rgba(40, 167, 69, 0.3);
+                transition: all 0.3s ease;
+                max-width: 280px;
+                position: relative;
+            ">
+                <!-- מצב מקוצר -->
+                <div id="compactMode" style="display: flex; align-items: center; gap: 10px;">
+                    
+                    <!-- כפתור הרחבה/כיווץ -->
+                    <button onclick="compactPlayer.toggleExpanded()" 
+                            style="background: linear-gradient(135deg, #28a745, #20c997);
+                                   color: white; border: none; border-radius: 50%;
+                                   width: 50px; height: 50px; font-size: 1.5em; cursor: pointer;
+                                   transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
+                        🎵
+                    </button>
+                    
+                    <!-- מידע מהיר -->
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: bold; color: #2c3e50; font-size: 0.9em; margin-bottom: 2px;">
+                            צלילי יוגה איכותיים
+                        </div>
+                        <div id="quickInfo" style="font-size: 0.8em; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${compactAudioLibrary[this.currentTrack].icon} ${compactAudioLibrary[this.currentTrack].name}
+                        </div>
+                    </div>
+                    
+                    <!-- כפתור הרחבה -->
+                    <button id="expandBtn" onclick="compactPlayer.toggleExpanded()" 
+                            style="background: none; border: none; color: #28a745; font-size: 1.2em; 
+                                   cursor: pointer; transition: all 0.3s ease; padding: 5px;">
+                        ⬇️
+                    </button>
+                </div>
 
-function openRandomAudio() {
-    const audioKeys = Object.keys(realAudioLinks);
-    const randomKey = audioKeys[Math.floor(Math.random() * audioKeys.length)];
-    const randomAudio = realAudioLinks[randomKey];
-    
-    openAudioLink(randomAudio.url, randomAudio.name);
-}
+                <!-- מצב מורחב -->
+                <div id="expandedMode" style="display: none; margin-top: 15px; padding-top: 15px; 
+                                           border-top: 1px solid #eee;">
+                    
+                    <!-- בחירת צליל -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; 
+                                      color: #2c3e50; font-size: 0.9em;">
+                            🎼 בחר צליל:
+                        </label>
+                        <select id="audioSelect" onchange="compactPlayer.selectAudio(this.value)" 
+                                style="width: 100%; padding: 8px; border-radius: 8px; 
+                                       border: 2px solid #28a745; background: white; 
+                                       font-size: 0.9em; color: #2c3e50;">
+                            ${Object.entries(compactAudioLibrary).map(([key, audio]) => `
+                                <option value="${key}" ${key === this.currentTrack ? 'selected' : ''}>
+                                    ${audio.icon} ${audio.name} (${audio.duration})
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <!-- כפתורי פעולה -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+                        <button onclick="compactPlayer.openCurrentAudio()" 
+                                style="padding: 10px; background: linear-gradient(135deg, #28a745, #20c997);
+                                       color: white; border: none; border-radius: 15px; cursor: pointer;
+                                       font-weight: bold; transition: all 0.3s ease; font-size: 0.9em;">
+                            ▶️ נגן
+                        </button>
+                        <button onclick="compactPlayer.openRandomAudio()" 
+                                style="padding: 10px; background: linear-gradient(135deg, #ffc107, #e0a800);
+                                       color: white; border: none; border-radius: 15px; cursor: pointer;
+                                       font-weight: bold; transition: all 0.3s ease; font-size: 0.9em;">
+                            🎲 אקראי
+                        </button>
+                    </div>
+                    
+                    <!-- הוראות מהירות -->
+                    <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); 
+                                padding: 10px; border-radius: 8px; font-size: 0.8em; color: #555; line-height: 1.4;">
+                        💡 <strong>איך להשתמש:</strong><br>
+                        בחר צליל ← לחץ "נגן" ← חזור לתרגל!
+                    </div>
+                </div>
+            </div>
+        `;
 
-function openPopularAudio() {
-    // קערה טיבטית - הכי פופולרי
-    const popular = realAudioLinks['tibetan-bowl'];
-    openAudioLink(popular.url, popular.name);
-}
-
-function showAudioTips() {
-    const tips = `
-🎵 טיפים לשימוש מיטבי בצלילי היוגה:
-
-🎯 לתרגול יוגה:
-- קערה טיבטית - מושלמת למדיטציה
-- גלי ים - מעולה לתרגול זורם
-- רוח ביער - נהדר לנשימות
-
-⏰ למשך זמן:
-- תרגול קצר (10-20 דק') - כל צליל מתאים
-- תרגול ארוך (30+ דק') - בחר צליל של 3+ שעות
-
-🔊 עוצמת קול:
-- התחל בנמוך ותעלה בהדרגה
-- הצליל צריך להיות ברקע, לא לכסות את הנשימה
-
-💡 טיפ מקצועי:
-פתח 2 צלילים יחד (למשל קערה + גשם) ליצירת שכבות!
-    `;
-    
-    alert(tips);
-}
-
-// הפעלת הפתרון החדש
-function initRealAudioSolution() {
-    setTimeout(() => {
-        replaceOldMusicPlayer();
-        
-        // הוספה לחלון הגלובלי
-        window.openAudioLink = openAudioLink;
-        window.openRandomAudio = openRandomAudio;
-        window.openPopularAudio = openPopularAudio;
-        window.showAudioTips = showAudioTips;
-        
         // הוספת סטיילים
+        this.addStyles();
+    }
+
+    addStyles() {
         const style = document.createElement('style');
+        style.id = 'compactPlayerStyles';
         style.textContent = `
-            .music-controls button:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3) !important;
-                border-color: #1976d2 !important;
-            }
-            
             .music-controls {
                 position: fixed !important;
                 top: 20px !important;
                 left: 20px !important;
                 z-index: 1000 !important;
-                max-width: 350px !important;
+                max-width: 280px !important;
+            }
+            
+            #compactPlayer button:hover {
+                transform: scale(1.05) !important;
+                box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+            }
+            
+            #expandBtn:hover {
+                transform: scale(1.2) !important;
+                color: #1976d2 !important;
+            }
+            
+            #audioSelect:focus {
+                outline: none;
+                border-color: #1976d2;
+                box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+            }
+            
+            /* אנימציות */
+            #expandedMode {
+                animation: slideDown 0.3s ease-out;
+            }
+            
+            @keyframes slideDown {
+                0% { 
+                    opacity: 0; 
+                    transform: translateY(-10px); 
+                    max-height: 0; 
+                }
+                100% { 
+                    opacity: 1; 
+                    transform: translateY(0); 
+                    max-height: 200px; 
+                }
+            }
+            
+            /* הקטנת הנגן במובייל */
+            @media (max-width: 768px) {
+                .music-controls {
+                    max-width: 250px !important;
+                    top: 10px !important;
+                    left: 10px !important;
+                }
+                
+                #compactMode {
+                    gap: 8px !important;
+                }
+                
+                #compactMode button {
+                    width: 40px !important;
+                    height: 40px !important;
+                    font-size: 1.2em !important;
+                }
             }
         `;
+
+        // הסרת סטיילים ישנים
+        const oldStyle = document.getElementById('compactPlayerStyles');
+        if (oldStyle) oldStyle.remove();
+        
         document.head.appendChild(style);
+    }
+
+    // פונקציות בקרה
+    toggleExpanded() {
+        this.isExpanded = !this.isExpanded;
+        const expandedMode = document.getElementById('expandedMode');
+        const expandBtn = document.getElementById('expandBtn');
         
-        console.log('🎵 פתרון צלילים אמיתיים הופעל!');
-        console.log('✅ הוסרו כל הצלילים הסינתטיים');
-        console.log('🔗 נוספו קישורים לצלילים איכותיים');
+        if (this.isExpanded) {
+            expandedMode.style.display = 'block';
+            expandBtn.textContent = '⬆️';
+            expandBtn.title = 'כווץ';
+        } else {
+            expandedMode.style.display = 'none';
+            expandBtn.textContent = '⬇️';
+            expandBtn.title = 'הרחב';
+        }
+    }
+
+    selectAudio(audioKey) {
+        this.currentTrack = audioKey;
+        const audio = compactAudioLibrary[audioKey];
         
-    }, 500);
+        // עדכון המידע המהיר
+        const quickInfo = document.getElementById('quickInfo');
+        if (quickInfo) {
+            quickInfo.textContent = `${audio.icon} ${audio.name}`;
+        }
+        
+        console.log(`🎵 נבחר: ${audio.name}`);
+    }
+
+    openCurrentAudio() {
+        const audio = compactAudioLibrary[this.currentTrack];
+        this.openAudioWindow(audio.url, audio.name);
+    }
+
+    openRandomAudio() {
+        const audioKeys = Object.keys(compactAudioLibrary);
+        const randomKey = audioKeys[Math.floor(Math.random() * audioKeys.length)];
+        const audio = compactAudioLibrary[randomKey];
+        
+        // עדכון הבחירה
+        this.selectAudio(randomKey);
+        const audioSelect = document.getElementById('audioSelect');
+        if (audioSelect) audioSelect.value = randomKey;
+        
+        this.openAudioWindow(audio.url, audio.name);
+    }
+
+    openAudioWindow(url, name) {
+        // פתיחת החלון
+        window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+        
+        // הודעה מהירה
+        this.showQuickToast(`🎵 נפתח: ${name}`);
+        
+        console.log('🎵 פותח צליל:', name);
+    }
+
+    showQuickToast(message) {
+        // יצירת הודעה קטנה ומהירה
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            z-index: 10001;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            animation: toastSlide 0.3s ease-out;
+        `;
+        toast.textContent = message;
+        
+        // הוספת אנימציה
+        const toastStyle = document.createElement('style');
+        toastStyle.textContent = `
+            @keyframes toastSlide {
+                0% { opacity: 0; transform: translateX(-100%); }
+                100% { opacity: 1; transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(toastStyle);
+        
+        document.body.appendChild(toast);
+        
+        // הסרה אוטומטית
+        setTimeout(() => {
+            toast.style.animation = 'toastSlide 0.3s ease-in reverse';
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                    toastStyle.remove();
+                }
+            }, 300);
+        }, 2000);
+    }
+
+    // הרס ונקוי
+    destroy() {
+        const style = document.getElementById('compactPlayerStyles');
+        if (style) style.remove();
+    }
+}
+
+// החלפת הנגן הישן
+function initCompactMusicPlayer() {
+    setTimeout(() => {
+        // הסרת נגנים ישנים
+        if (window.currentAudio) {
+            try {
+                window.currentAudio.stop();
+            } catch (e) {}
+            window.currentAudio = null;
+        }
+        
+        // הסרת פונקציות ישנות
+        window.toggleMusic = null;
+        window.changeMusic = null;
+        window.changeVolume = null;
+        window.openAudioLink = null;
+        window.openRandomAudio = null;
+        window.openPopularAudio = null;
+        window.showAudioTips = null;
+        
+        // יצירת נגן חדש
+        window.compactPlayer = new CompactMusicPlayer();
+        
+        console.log('🎵 נגן קומפקטי הופעל!');
+        console.log('📱 עכשיו הנגן לא מסתיר את הדף');
+        console.log('🎛️ לחץ על החץ להרחבת האפשרויות');
+        
+    }, 1000);
 }
 
 // הפעלה אוטומטית
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRealAudioSolution);
+    document.addEventListener('DOMContentLoaded', initCompactMusicPlayer);
 } else {
-    initRealAudioSolution();
+    initCompactMusicPlayer();
 }
 </script>
 </html>
