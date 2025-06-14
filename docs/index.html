@@ -2852,223 +2852,211 @@ if (document.readyState === 'loading') {
     initSimpleYogaVideos();
 }
 </script>
-<script>// ===== נגן מוזיקה קומפקטי עם סליידר =====
+<script>
+    // ===== בורר מוזיקה הניתן להתאמה אישית =====
 
-// מאגר צלילים (זהה לקודם)
-const compactAudioLibrary = {
-    'tibetan-bowl': {
-        name: 'קערה טיבטית',
-        url: 'https://youtu.be/sHLzXAXwmIc',
-        icon: '🏔️',
-        duration: '3:00:00'
+// מאגר צלילים שאתה יכול לערוך בקלות
+let customAudioLibrary = {
+    'option1': {
+        name: 'הכנס כאן קישור לצליל שאתה אוהב',
+        url: '',
+        icon: '🎵',
+        description: 'לחץ על "ערוך קישורים" להוספת קישורים שלך'
     },
-    'rain-sounds': {
-        name: 'גשם עדין',
-        url: 'https://youtu.be/mPZkdNFkNps',
-        icon: '🌧️',
-        duration: '10:00:00'
+    'option2': {
+        name: 'אפשרות 2 - ריקה',
+        url: '',
+        icon: '🎶',
+        description: 'זמין להוספה'
     },
-    'ocean-waves': {
-        name: 'גלי ים',
-        url: 'https://youtu.be/V1bFr2SWP1I',
-        icon: '🌊',
-        duration: '11:00:00'
+    'option3': {
+        name: 'אפשרות 3 - ריקה',
+        url: '',
+        icon: '🎼',
+        description: 'זמין להוספה'
     },
-    'forest-wind': {
-        name: 'רוח ביער',
-        url: 'https://youtu.be/nDq6TstdEi8',
-        icon: '🌲',
-        duration: '2:00:00'
+    'option4': {
+        name: 'אפשרות 4 - ריקה',
+        url: '',
+        icon: '🎤',
+        description: 'זמין להוספה'
     },
-    'om-chanting': {
-        name: 'האמהום',
-        url: 'https://youtu.be/cgVQgZ-LE8M',
-        icon: '🕉️',
-        duration: '1:30:00'
-    },
-    'birds-forest': {
-        name: 'ציפורים',
-        url: 'https://youtu.be/xNN7iTA57jM',
-        icon: '🐦',
-        duration: '8:00:00'
+    'option5': {
+        name: 'אפשרות 5 - ריקה',
+        url: '',
+        icon: '🎧',
+        description: 'זמין להוספה'
     }
 };
 
-// מחלקת נגן קומפקטי
-class CompactMusicPlayer {
+// מחלקת בורר מוזיקה מותאם אישית
+class CustomMusicSelector {
     constructor() {
         this.isExpanded = false;
-        this.currentTrack = 'tibetan-bowl';
-        this.createCompactPlayer();
+        this.currentSelection = 'option1';
+        this.createSelector();
+        this.loadSavedLinks();
     }
 
-    createCompactPlayer() {
+    createSelector() {
         const musicControls = document.querySelector('.music-controls');
         if (!musicControls) return;
 
-        // החלפת הנגן הישן בנגן קומפקטי
         musicControls.innerHTML = `
-            <div id="compactPlayer" style="
+            <div id="customMusicSelector" style="
                 background: rgba(255, 255, 255, 0.98);
-                border-radius: 25px;
+                border-radius: 20px;
                 padding: 15px;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.15);
                 backdrop-filter: blur(15px);
                 border: 2px solid rgba(40, 167, 69, 0.3);
+                max-width: 300px;
                 transition: all 0.3s ease;
-                max-width: 280px;
-                position: relative;
             ">
-                <!-- מצב מקוצר -->
-                <div id="compactMode" style="display: flex; align-items: center; gap: 10px;">
-                    
-                    <!-- כפתור הרחבה/כיווץ -->
-                    <button onclick="compactPlayer.toggleExpanded()" 
-                            style="background: linear-gradient(135deg, #28a745, #20c997);
-                                   color: white; border: none; border-radius: 50%;
-                                   width: 50px; height: 50px; font-size: 1.5em; cursor: pointer;
-                                   transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
-                        🎵
-                    </button>
-                    
-                    <!-- מידע מהיר -->
-                    <div style="flex: 1; min-width: 0;">
-                        <div style="font-weight: bold; color: #2c3e50; font-size: 0.9em; margin-bottom: 2px;">
-                            צלילי יוגה איכותיים
-                        </div>
-                        <div id="quickInfo" style="font-size: 0.8em; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            ${compactAudioLibrary[this.currentTrack].icon} ${compactAudioLibrary[this.currentTrack].name}
-                        </div>
-                    </div>
-                    
-                    <!-- כפתור הרחבה -->
-                    <button id="expandBtn" onclick="compactPlayer.toggleExpanded()" 
-                            style="background: none; border: none; color: #28a745; font-size: 1.2em; 
+                <!-- כותרת עם כפתור הרחבה -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: #2c3e50; font-size: 1.1em;">
+                        🎵 מוזיקת רקע
+                    </h3>
+                    <button onclick="customMusicSelector.toggleExpanded()" 
+                            style="background: none; border: none; color: #28a745; font-size: 1.3em; 
                                    cursor: pointer; transition: all 0.3s ease; padding: 5px;">
-                        ⬇️
+                        <span id="expandIcon">⬇️</span>
                     </button>
                 </div>
 
-                <!-- מצב מורחב -->
-                <div id="expandedMode" style="display: none; margin-top: 15px; padding-top: 15px; 
-                                           border-top: 1px solid #eee;">
-                    
-                    <!-- בחירת צליל -->
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold; 
-                                      color: #2c3e50; font-size: 0.9em;">
-                            🎼 בחר צליל:
-                        </label>
-                        <select id="audioSelect" onchange="compactPlayer.selectAudio(this.value)" 
-                                style="width: 100%; padding: 8px; border-radius: 8px; 
-                                       border: 2px solid #28a745; background: white; 
-                                       font-size: 0.9em; color: #2c3e50;">
-                            ${Object.entries(compactAudioLibrary).map(([key, audio]) => `
-                                <option value="${key}" ${key === this.currentTrack ? 'selected' : ''}>
-                                    ${audio.icon} ${audio.name} (${audio.duration})
-                                </option>
-                            `).join('')}
-                        </select>
+                <!-- תצוגה מקוצרת -->
+                <div id="compactView">
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                        <button onclick="customMusicSelector.openSelectedAudio()" 
+                                style="background: linear-gradient(135deg, #28a745, #20c997);
+                                       color: white; border: none; border-radius: 15px;
+                                       padding: 10px 20px; cursor: pointer; font-weight: bold;
+                                       transition: all 0.3s ease; flex: 1;">
+                            ▶️ נגן מוזיקה
+                        </button>
+                        
+                        <button onclick="customMusicSelector.openRandomAudio()" 
+                                style="background: linear-gradient(135deg, #ffc107, #e0a800);
+                                       color: white; border: none; border-radius: 15px;
+                                       padding: 10px; cursor: pointer; transition: all 0.3s ease;">
+                            🎲
+                        </button>
                     </div>
                     
+                    <div style="font-size: 0.8em; color: #666; text-align: center;">
+                        לחץ ⬇️ לבחירת מוזיקה או הוספת קישורים
+                    </div>
+                </div>
+
+                <!-- תצוגה מורחבת -->
+                <div id="expandedView" style="display: none;">
+                    
+                    <!-- בחירת מוזיקה -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50; font-size: 0.9em;">
+                            🎼 בחר מוזיקה:
+                        </label>
+                        <select id="musicSelect" onchange="customMusicSelector.selectMusic(this.value)" 
+                                style="width: 100%; padding: 10px; border-radius: 8px; 
+                                       border: 2px solid #28a745; background: white; font-size: 0.9em;">
+                            ${this.generateMusicOptions()}
+                        </select>
+                    </div>
+
+                    <!-- פרטי הבחירה הנוכחית -->
+                    <div id="currentMusicInfo" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); 
+                                                       padding: 12px; border-radius: 10px; margin-bottom: 15px;">
+                        <div style="font-weight: bold; color: #1976d2; margin-bottom: 5px;" id="selectedMusicName">
+                            ${customAudioLibrary[this.currentSelection].name}
+                        </div>
+                        <div style="font-size: 0.8em; color: #555;" id="selectedMusicDesc">
+                            ${customAudioLibrary[this.currentSelection].description}
+                        </div>
+                    </div>
+
                     <!-- כפתורי פעולה -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-                        <button onclick="compactPlayer.openCurrentAudio()" 
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <button onclick="customMusicSelector.openSelectedAudio()" 
                                 style="padding: 10px; background: linear-gradient(135deg, #28a745, #20c997);
-                                       color: white; border: none; border-radius: 15px; cursor: pointer;
+                                       color: white; border: none; border-radius: 12px; cursor: pointer;
                                        font-weight: bold; transition: all 0.3s ease; font-size: 0.9em;">
                             ▶️ נגן
                         </button>
-                        <button onclick="compactPlayer.openRandomAudio()" 
-                                style="padding: 10px; background: linear-gradient(135deg, #ffc107, #e0a800);
-                                       color: white; border: none; border-radius: 15px; cursor: pointer;
+                        
+                        <button onclick="customMusicSelector.editLinks()" 
+                                style="padding: 10px; background: linear-gradient(135deg, #6f42c1, #5a32a3);
+                                       color: white; border: none; border-radius: 12px; cursor: pointer;
                                        font-weight: bold; transition: all 0.3s ease; font-size: 0.9em;">
-                            🎲 אקראי
+                            ✏️ ערוך
                         </button>
                     </div>
-                    
+
                     <!-- הוראות מהירות -->
-                    <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); 
+                    <div style="background: linear-gradient(135deg, #fff3e0, #ffe0b2); 
                                 padding: 10px; border-radius: 8px; font-size: 0.8em; color: #555; line-height: 1.4;">
-                        💡 <strong>איך להשתמש:</strong><br>
-                        בחר צליל ← לחץ "נגן" ← חזור לתרגל!
+                        💡 <strong>איך להוסיף מוזיקה:</strong><br>
+                        לחץ "ערוך" ← הדבק קישור יוטיוב ← שמור
                     </div>
                 </div>
             </div>
         `;
 
-        // הוספת סטיילים
         this.addStyles();
+    }
+
+    generateMusicOptions() {
+        return Object.entries(customAudioLibrary).map(([key, music]) => `
+            <option value="${key}" ${key === this.currentSelection ? 'selected' : ''}>
+                ${music.icon} ${music.name}
+            </option>
+        `).join('');
     }
 
     addStyles() {
         const style = document.createElement('style');
-        style.id = 'compactPlayerStyles';
+        style.id = 'customMusicStyles';
         style.textContent = `
             .music-controls {
                 position: fixed !important;
                 top: 20px !important;
                 left: 20px !important;
                 z-index: 1000 !important;
-                max-width: 280px !important;
+                max-width: 300px !important;
             }
             
-            #compactPlayer button:hover {
-                transform: scale(1.05) !important;
-                box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+            #customMusicSelector button:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
             }
             
-            #expandBtn:hover {
-                transform: scale(1.2) !important;
-                color: #1976d2 !important;
+            #expandIcon {
+                transition: transform 0.3s ease;
             }
             
-            #audioSelect:focus {
-                outline: none;
-                border-color: #1976d2;
-                box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+            .expanded #expandIcon {
+                transform: rotate(180deg);
             }
             
-            /* אנימציות */
-            #expandedMode {
+            #expandedView {
                 animation: slideDown 0.3s ease-out;
             }
             
             @keyframes slideDown {
-                0% { 
-                    opacity: 0; 
-                    transform: translateY(-10px); 
-                    max-height: 0; 
-                }
-                100% { 
-                    opacity: 1; 
-                    transform: translateY(0); 
-                    max-height: 200px; 
-                }
+                0% { opacity: 0; max-height: 0; }
+                100% { opacity: 1; max-height: 400px; }
             }
             
-            /* הקטנת הנגן במובייל */
             @media (max-width: 768px) {
                 .music-controls {
-                    max-width: 250px !important;
+                    max-width: 280px !important;
                     top: 10px !important;
                     left: 10px !important;
-                }
-                
-                #compactMode {
-                    gap: 8px !important;
-                }
-                
-                #compactMode button {
-                    width: 40px !important;
-                    height: 40px !important;
-                    font-size: 1.2em !important;
                 }
             }
         `;
 
-        // הסרת סטיילים ישנים
-        const oldStyle = document.getElementById('compactPlayerStyles');
+        const oldStyle = document.getElementById('customMusicStyles');
         if (oldStyle) oldStyle.remove();
         
         document.head.appendChild(style);
@@ -3077,146 +3065,196 @@ class CompactMusicPlayer {
     // פונקציות בקרה
     toggleExpanded() {
         this.isExpanded = !this.isExpanded;
-        const expandedMode = document.getElementById('expandedMode');
-        const expandBtn = document.getElementById('expandBtn');
+        const expandedView = document.getElementById('expandedView');
+        const compactView = document.getElementById('compactView');
+        const expandIcon = document.getElementById('expandIcon');
+        const selector = document.getElementById('customMusicSelector');
         
         if (this.isExpanded) {
-            expandedMode.style.display = 'block';
-            expandBtn.textContent = '⬆️';
-            expandBtn.title = 'כווץ';
+            expandedView.style.display = 'block';
+            compactView.style.display = 'none';
+            expandIcon.textContent = '⬆️';
+            selector.classList.add('expanded');
         } else {
-            expandedMode.style.display = 'none';
-            expandBtn.textContent = '⬇️';
-            expandBtn.title = 'הרחב';
+            expandedView.style.display = 'none';
+            compactView.style.display = 'block';
+            expandIcon.textContent = '⬇️';
+            selector.classList.remove('expanded');
         }
     }
 
-    selectAudio(audioKey) {
-        this.currentTrack = audioKey;
-        const audio = compactAudioLibrary[audioKey];
+    selectMusic(musicKey) {
+        this.currentSelection = musicKey;
+        const music = customAudioLibrary[musicKey];
         
-        // עדכון המידע המהיר
-        const quickInfo = document.getElementById('quickInfo');
-        if (quickInfo) {
-            quickInfo.textContent = `${audio.icon} ${audio.name}`;
-        }
+        // עדכון המידע
+        const nameEl = document.getElementById('selectedMusicName');
+        const descEl = document.getElementById('selectedMusicDesc');
         
-        console.log(`🎵 נבחר: ${audio.name}`);
+        if (nameEl) nameEl.textContent = music.name;
+        if (descEl) descEl.textContent = music.description;
+        
+        console.log(`🎵 נבחר: ${music.name}`);
     }
 
-    openCurrentAudio() {
-        const audio = compactAudioLibrary[this.currentTrack];
-        this.openAudioWindow(audio.url, audio.name);
+    openSelectedAudio() {
+        const music = customAudioLibrary[this.currentSelection];
+        
+        if (!music.url || music.url === '') {
+            alert('🎵 לא הוגדר קישור למוזיקה זו!\n\nלחץ על "ערוך קישורים" להוספת קישור יוטיוב.');
+            return;
+        }
+        
+        this.openAudioWindow(music.url, music.name);
     }
 
     openRandomAudio() {
-        const audioKeys = Object.keys(compactAudioLibrary);
-        const randomKey = audioKeys[Math.floor(Math.random() * audioKeys.length)];
-        const audio = compactAudioLibrary[randomKey];
+        const musicKeys = Object.keys(customAudioLibrary);
+        const availableKeys = musicKeys.filter(key => customAudioLibrary[key].url && customAudioLibrary[key].url !== '');
         
-        // עדכון הבחירה
-        this.selectAudio(randomKey);
-        const audioSelect = document.getElementById('audioSelect');
-        if (audioSelect) audioSelect.value = randomKey;
+        if (availableKeys.length === 0) {
+            alert('🎵 אין קישורי מוזיקה זמינים!\n\nלחץ על "ערוך קישורים" להוספת קישורים.');
+            return;
+        }
         
-        this.openAudioWindow(audio.url, audio.name);
+        const randomKey = availableKeys[Math.floor(Math.random() * availableKeys.length)];
+        const music = customAudioLibrary[randomKey];
+        
+        this.selectMusic(randomKey);
+        this.openAudioWindow(music.url, music.name);
     }
 
     openAudioWindow(url, name) {
-        // פתיחת החלון
         window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
-        
-        // הודעה מהירה
-        this.showQuickToast(`🎵 נפתח: ${name}`);
-        
-        console.log('🎵 פותח צליל:', name);
+        this.showToast(`🎵 נפתח: ${name}`);
+        console.log('🎵 פותח מוזיקה:', name);
     }
 
-    showQuickToast(message) {
-        // יצירת הודעה קטנה ומהירה
+    editLinks() {
+        const musicKey = this.currentSelection;
+        const currentMusic = customAudioLibrary[musicKey];
+        
+        const newName = prompt('🎵 שם המוזיקה:', currentMusic.name);
+        if (!newName) return;
+        
+        const newUrl = prompt('🔗 קישור יוטיוב (או השאר ריק):', currentMusic.url);
+        if (newUrl === null) return;
+        
+        const newIcon = prompt('🎨 אמוג׳י (אופציונלי):', currentMusic.icon);
+        
+        // עדכון המוזיקה
+        customAudioLibrary[musicKey] = {
+            name: newName,
+            url: newUrl || '',
+            icon: newIcon || currentMusic.icon,
+            description: newUrl ? 'קישור מותאם אישית' : 'לא הוגדר קישור'
+        };
+        
+        // שמירה ועדכון התצוגה
+        this.saveLinks();
+        this.refreshDisplay();
+        
+        alert('✅ המוזיקה עודכנה בהצלחה!');
+    }
+
+    saveLinks() {
+        try {
+            localStorage.setItem('customMusicLinks', JSON.stringify(customAudioLibrary));
+        } catch (e) {
+            console.log('שמירה באחסון זמני');
+        }
+    }
+
+    loadSavedLinks() {
+        try {
+            const saved = localStorage.getItem('customMusicLinks');
+            if (saved) {
+                customAudioLibrary = JSON.parse(saved);
+            }
+        } catch (e) {
+            console.log('טוען הגדרות ברירת מחדל');
+        }
+    }
+
+    refreshDisplay() {
+        // רענון הבורר
+        const musicSelect = document.getElementById('musicSelect');
+        if (musicSelect) {
+            musicSelect.innerHTML = this.generateMusicOptions();
+            musicSelect.value = this.currentSelection;
+        }
+        
+        // רענון המידע
+        this.selectMusic(this.currentSelection);
+    }
+
+    showToast(message) {
         const toast = document.createElement('div');
         toast.style.cssText = `
             position: fixed;
-            top: 80px;
+            top: 100px;
             left: 20px;
             background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
+            padding: 12px 18px;
+            border-radius: 25px;
             font-size: 0.9em;
             font-weight: bold;
             z-index: 10001;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-            animation: toastSlide 0.3s ease-out;
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            animation: slideInOut 3s ease-in-out;
         `;
         toast.textContent = message;
         
-        // הוספת אנימציה
-        const toastStyle = document.createElement('style');
-        toastStyle.textContent = `
-            @keyframes toastSlide {
-                0% { opacity: 0; transform: translateX(-100%); }
-                100% { opacity: 1; transform: translateX(0); }
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInOut {
+                0%, 100% { opacity: 0; transform: translateX(-100%); }
+                20%, 80% { opacity: 1; transform: translateX(0); }
             }
         `;
-        document.head.appendChild(toastStyle);
-        
+        document.head.appendChild(style);
         document.body.appendChild(toast);
         
-        // הסרה אוטומטית
         setTimeout(() => {
-            toast.style.animation = 'toastSlide 0.3s ease-in reverse';
-            setTimeout(() => {
-                if (toast.parentElement) {
-                    toast.remove();
-                    toastStyle.remove();
-                }
-            }, 300);
-        }, 2000);
-    }
-
-    // הרס ונקוי
-    destroy() {
-        const style = document.getElementById('compactPlayerStyles');
-        if (style) style.remove();
+            if (toast.parentElement) {
+                toast.remove();
+                style.remove();
+            }
+        }, 3000);
     }
 }
 
-// החלפת הנגן הישן
-function initCompactMusicPlayer() {
+// הפעלת הבורר המותאם אישית
+function initCustomMusicSelector() {
     setTimeout(() => {
-        // הסרת נגנים ישנים
+        // ניקוי נגנים ישנים
         if (window.currentAudio) {
             try {
                 window.currentAudio.stop();
             } catch (e) {}
-            window.currentAudio = null;
         }
         
         // הסרת פונקציות ישנות
-        window.toggleMusic = null;
-        window.changeMusic = null;
-        window.changeVolume = null;
-        window.openAudioLink = null;
-        window.openRandomAudio = null;
-        window.openPopularAudio = null;
-        window.showAudioTips = null;
+        if (window.compactPlayer) {
+            window.compactPlayer.destroy();
+        }
         
-        // יצירת נגן חדש
-        window.compactPlayer = new CompactMusicPlayer();
+        // יצירת בורר חדש
+        window.customMusicSelector = new CustomMusicSelector();
         
-        console.log('🎵 נגן קומפקטי הופעל!');
-        console.log('📱 עכשיו הנגן לא מסתיר את הדף');
-        console.log('🎛️ לחץ על החץ להרחבת האפשרויות');
+        console.log('🎵 בורר מוזיקה מותאם אישית הופעל!');
+        console.log('✏️ לחץ "ערוך" להוספת הקישורים שלך');
+        console.log('🎼 עכשיו תוכל להוסיף את המוזיקה שאתה אוהב!');
         
     }, 1000);
 }
 
 // הפעלה אוטומטית
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCompactMusicPlayer);
+    document.addEventListener('DOMContentLoaded', initCustomMusicSelector);
 } else {
-    initCompactMusicPlayer();
+    initCustomMusicSelector();
 }
 </script>
 </html>
